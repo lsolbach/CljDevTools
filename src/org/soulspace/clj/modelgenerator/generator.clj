@@ -2,7 +2,7 @@
   (:use
     [clojure.java.io :exclude [delete-file]]
     [clojure.string :only [join]]
-    [org.soulspace.clj.lib string file file-search]
+    [org.soulspace.clj string file file-search]
     [org.soulspace.clj.java beans]
     [org.soulspace.clj.modelgenerator design-model template context protected-areas]))
 

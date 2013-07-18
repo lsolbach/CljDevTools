@@ -1,6 +1,6 @@
 (ns org.soulspace.clj.modelgenerator.template
   (:use
-    [org.soulspace.clj.lib file file-search]
+    [org.soulspace.clj file file-search]
     )
   (:import
     [java.io File]

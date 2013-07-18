@@ -1,7 +1,7 @@
 (ns org.soulspace.clj.modelgenerator.design-model
   (:use [clojure.java.io :exclude [delete-file]]
         [clojure.set :only [intersection]]
-        [org.soulspace.clj.lib string function])
+        [org.soulspace.clj string function])
   (:import [java.io File]
            [org.soulspace.template.impl TemplateEngineImpl]
            [org.soulspace.template.datasource.impl BeanDataSourceImpl]
