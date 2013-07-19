@@ -8,4 +8,9 @@
   
   ;(def begin-pattern (str "^.*" (:protectedArea gen) "-BEGIN\\((.*)\\).*$"))
   ;(def end-pattern (str "^.*" (:protectedArea gen)  "-END\\(" area-id "\\).*$"))
+
+
+  ; Dump protected areas as clojure map per generated file in a checked in dir
+  ; so that the generated filed has not to be checked in 
+
   )
