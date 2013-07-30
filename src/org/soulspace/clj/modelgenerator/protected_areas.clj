@@ -1,8 +1,8 @@
 (ns org.soulspace.clj.modelgenerator.protected-areas
   (:use [clojure.java.io]))
 
-; Dump protected areas as clojure map per generated file in a checked in dir
-; so that the generated filed has not to be checked in 
+; TODO dump protected areas as clojure map per generated file in a checked in dir
+; TODO  so that the generated filed has not to be checked in 
 
 (defn begin-pattern [area-marker]
   "Returns the regex pattern for the begin of a protected area based on the area marker."
