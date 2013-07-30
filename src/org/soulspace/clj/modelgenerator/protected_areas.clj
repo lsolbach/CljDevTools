@@ -1,16 +1,39 @@
-(ns org.soulspace.clj.modelgenerator.protected-areas)
+(ns org.soulspace.clj.modelgenerator.protected-areas
+  (:use [clojure.java.io]))
 
-(defn read-protected-areas [gen path]
-  ; read line of file
-  ; parse line for start pattern from gen protected area pattern from gen
-  ; read protected area till end pattern and assoc with map
-  ; return map
+; Dump protected areas as clojure map per generated file in a checked in dir
+; so that the generated filed has not to be checked in 
+
+(defn begin-pattern [area-marker]
+  "Returns the regex pattern for the begin of a protected area based on the area marker."
+  (re-pattern (str "^.*" area-marker "-BEGIN\\((.*)\\).*$")))
+
+(defn end-pattern [area-marker area-id]
+  "Returns the regex pattern for the end of a protected area based on the area marker and area id."
+  (re-pattern (str "^.*" area-marker "-END\\(" area-id "\\).*$")))
+
+(defn read-lines
+  "Reads the file given and returns a non lazy sequence a of its lines."
+  ([file]
+    (with-open [rdr (reader file)]
+      (doall (line-seq (reader))))))
+
+; TODO line separator is encoding dependant!?!
+(defn parse-protected-areas [area-marker lines]
+  "Parse the lines into a protected area map."
+  (let [begin-re (begin-pattern area-marker)]
+    (loop [remaining-lines lines area-id nil area-content "" area-map {}]
+      (if (seq remaining-lines)
+        (if (nil? area-id)
+          (if-let [begin-matches (re-seq begin-re (first remaining-lines))]
+            (recur (rest remaining-lines) (nth (first begin-matches) 1) "" area-map) ; line starting a protected area
+            (recur (rest remaining-lines) nil "" area-map)) ; line outside any protected areas
+          (if-let [end-match (re-matches (end-pattern area-marker area-id) (first remaining-lines))]
+            (recur (rest remaining-lines) nil "" (assoc area-map area-id area-content)) ; line ending a protected area
+            (recur (rest remaining-lines) area-id (str area-content (first remaining-lines) "\n") area-map))) ; line inside a protected area
+        area-map)))) ; no more lines, return area map
   
-  ;(def begin-pattern (str "^.*" (:protectedArea gen) "-BEGIN\\((.*)\\).*$"))
-  ;(def end-pattern (str "^.*" (:protectedArea gen)  "-END\\(" area-id "\\).*$"))
-
-
-  ; Dump protected areas as clojure map per generated file in a checked in dir
-  ; so that the generated filed has not to be checked in 
-
-  )
+(defn read-protected-areas [gen path]
+  "Reads the given path and returns the proected areas as a map."
+  (if-let [area-marker (:protectedArea gen)]
+    (parse-protected-areas area-marker (read-lines path))))

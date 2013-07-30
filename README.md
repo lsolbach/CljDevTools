@@ -21,6 +21,6 @@ Code Repository
 History
 -------
 
-Version 0.1.0 (--.--.201-)
+Version 0.4.0 (--.--.201-)
 --------------------------
 * Initial import

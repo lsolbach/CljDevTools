@@ -15,6 +15,9 @@
           template ((file-locator searchpath "tmpl") (:template gen))]
       (conj (vec includes) template))))
 
+(defn dump-datasource [ds]
+  (org.soulspace.template.util.DataSourceUtil/dump ds))
+
 (defn create-datasource 
   ([]
     (BeanDataSourceImpl.))
@@ -29,6 +32,5 @@
 (defn get-template-engine [ctx gen]
   (let [engine (create-template-engine)
         template-files (get-template-files ctx gen)]
-    ;(println "template files" template-files)
     (.loadTemplates engine (into-array template-files))
     engine))

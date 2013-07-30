@@ -29,6 +29,7 @@
 
 (defn write-generated-artifact [pathname result]
   ;(println "writing file " pathname)
+  ;(println "content " result)
   (let [file (as-file pathname)
         parent (parent-dir file)]
     ; TODO check suppress-write
@@ -39,8 +40,8 @@
     (spit pathname result)))
 
 (defn build-context [ctx-map]
-  "build a context map which is accessible from within the templates"
-  (loop [ctx {} src (keys ctx-map)]
+  "Build a context map which is accessible from within the templates."
+  (loop [ctx {"Timestamp" (str (java.util.Date.))} src (keys ctx-map)]
     (if-not (seq src)
       ctx
       (let [k (first src)
@@ -50,32 +51,37 @@
 ; TODO create functions in template.clj for the direct java calls here
 ; TODO to abstract from the concrete template engine implementation
 (defn generate-for-element
+  "Call the TemplateEngine's generate method for the given element and generator context."
   ([engine gen element]
     (let [ds (create-datasource element)]
-      (.add ds "GenContext" (build-context gen))
+      (.add ds "GENERATOR_CONTEXT" (build-context gen))
       (.generate engine ds)))
-  ([engine gen element datasource]
+  ([engine gen element protected-areas datasource]
     (let [ds (create-datasource element datasource)]
-      (.add ds "GenContext" (build-context gen))
+      (.add ds "GENERATOR_CONTEXT" (build-context gen))
+      (when (seq protected-areas)
+        (.add ds "PROTECTED_AREAS" protected-areas))
       (.generate engine ds))))
 
 (defn generate-for-generator [ctx gen model model-ds]
-;  (println "Getting template engine for" (:template gen))
   (let [engine (get-template-engine ctx gen)]
     (doseq [element (element-seq gen model)]
       (when (must-generate? gen element)
-        ; TODO check for protected areas and read them
-        (let [result (generate-for-element engine gen element)] ; TODO add model-ds?
-          (write-generated-artifact (get-path (:destDir ctx) gen element) result))))))
+        (let [path (get-path (:destDir ctx) gen element)
+              protected-areas (read-protected-areas gen path)]
+          ; TODO check for protected areas and read them
+          (let [result (generate-for-element engine gen element protected-areas model-ds)] ; TODO add model-ds?
+            (write-generated-artifact path result)))))))
 
 (defn generate-all
   ([ctx]
+    "Load the model specified by the context and call all generators in the generation context."
     (generate-all ctx (:generators ctx)))
   ([ctx generators]
-    "load the model specified by the context and generate for every given generator"
-;    (println "Generator called" generators)
+    "Load the model specified by the context and call all given generators."
+    ; (println "Generator called" generators)
     (let [model (initialize-model ctx)
           model-ds (create-datasource model)]
       (doseq [gen generators]
-;        (println "calling generator" gen)
+        ; (println "calling generator" gen)
         (generate-for-generator ctx gen model model-ds)))))

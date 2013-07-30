@@ -59,13 +59,16 @@
     name-str))
 
 (defn namespace-path [gen element]
+  ; must be consistent with method namespace() in model/lib.tinc
   (str 
     (when (:subdir gen)
       (str (:subdir gen) "/"))
     (when (:namespacePrefix gen)
       (str (ns-to-path (:namespacePrefix gen)) "/"))
     (if (:baseNamespace gen)
-      (str (ns-to-path (base-name (:baseNamespace gen) element)) "/")
+      (if (:useNameAsNamespace gen)
+        (str (ns-to-path (base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
+        (str (ns-to-path (base-name (:baseNamespace gen) element)) "/"))
       (if-not (nil? (element-namespace gen element))
         (str (ns-to-path (element-namespace gen element)) "/")))
     (when (:namespaceSuffix gen)
@@ -96,21 +99,23 @@
     (set stereotypes)))
 
 (defn generate-for-stereotype? [gen element]
-  (let [s-el (into #{} (map #(.getName %) (.getStereotypeSet element)))
-        s-gen (stereotype-set (:stereotypes gen))
-        result (cond
-                 (nil? s-gen)
-                 true ; unconstrained
-                 (and (contains? s-gen "ALL") (seq s-el))
-                 true ; for any element with a stereotype set
-                 (and (contains? s-gen "NONE") (empty? s-el))
-                 true ; for any element without stereotypes
-                 (set? s-gen) ; for any element with a stereotype from the set of stereotypes
-                 (not (empty? (intersection s-gen s-el)))
-                 :default
-                 false)]
-    ;(println "generate for stereotypes gen" s-gen "element" s-el "result" result)
-    result))
+  (if-not (seq (:stereotypes gen))
+    true ; no stereotype constraint
+    (let [s-el (into #{} (map #(.getName %) (.getStereotypeSet element)))
+          s-gen (stereotype-set (:stereotypes gen))
+          result (cond
+                   (nil? s-gen)
+                   true ; unconstrained
+                   (and (contains? s-gen "ALL") (seq s-el))
+                   true ; for any element with a stereotype set
+                   (and (contains? s-gen "NONE") (empty? s-el))
+                   true ; for any element without stereotypes
+                   (set? s-gen) ; for any element with a stereotype from the set of stereotypes
+                   (not (empty? (intersection s-gen s-el)))
+                   :default
+                   false)]
+      ;(println "generate for stereotypes gen" s-gen "element" s-el "result" result)
+      result)))
 
 (defn equal-values? [m1 m2 k]
   (= (m1 k) (m2 k)))
@@ -124,32 +129,33 @@
     true))
   
 (defn generate-for-namespace? [gen element]
-  (let [n (element-namespace gen element)
+  (let [element-ns (element-namespace gen element)
+        ; TODO enhance for seqs in :namespaceIncludes and :namespaceExcludes
         result (cond
                  (and (empty? (:namespaceIncludes gen)) (empty? (:namespaceExcludes gen)))
                  true ; unconstrained
                  (and (not (empty? (:namespaceIncludes gen)))
-                      (starts-with (:namespaceIncludes gen) element-namespace))
+                      (starts-with (:namespaceIncludes gen) element-ns))
                  true ; on include list
                  (and (not (empty? (:namespaceExcludes gen)))
-                      (starts-with (:namespaceIncludes gen) element-namespace))
+                      (starts-with (:namespaceIncludes gen) element-ns))
                  false ; on exclude list
                  :default true)]
-;    (println "generate for namespace" result)
+    ; (println "generate for namespace" result)
     result))
 
 (defn must-generate? [gen element]
-;  (println "checking generation for" (.getName element))
+  ; (println "checking generation for" (.getName element))
   (let [result (and
                  (model-element? element)
                  (generate-for-stereotype? gen element)
                  (generate-for-tagged-value? gen element)
                  (generate-for-namespace? gen element))]
-    ;(println "must generate" result)
+    ; (println "must generate for element" element "?" result)
     result))
         
 (defn element-seq [gen model]
-  ;(println "getting elements for generator" gen)
+  ; (println "getting elements of type" (:element gen) "for generator" gen)
   (let [elements (cond
     (= "ActionSequence" (:element gen)) (seq (.getActionSequenceList model))
     (= "Actor" (:element gen)) (seq (.getActorList model))
@@ -204,10 +210,11 @@
     (= "TimeEvent" (:element gen)) (seq (.getTimeEventList model))
     (= "UninterpretedAction" (:element gen)) (seq (.getUninterpretedActionList model))
     (= "UseCase" (:element gen)) (seq (.getUseCaseList model))
-    (:default) (println "TODO: add" (:element gen) "to element-seq")
+    :default (println "TODO: add" (:element gen) "to element-seq")
     ; TODO add other elements (if any?) 
     )]
-;    (println "elements" elements)
+    ;(if-not (seq elements)
+    ;  (println "INFO: No elements found in model for generator" gen "!"))
     elements))
 
 ; UML/XMI repository initialization
