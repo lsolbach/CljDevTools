@@ -3,13 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="unittest"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/runtime/CljLibrary.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/clojure.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/ModelRepository2.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/TemplateEngine.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/CljJavaLibrary.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/oro.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/UML14ModelBuilder.jar"/>
-	<classpathentry kind="lib" path="lib/runtime/UML14Repository.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/CljJavaLibrary.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/CljLibrary.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/clojure.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/ModelRepository2.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/oro.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/TemplateEngine.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/UML14ModelBuilder.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/UML14Repository.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
