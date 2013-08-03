@@ -4,10 +4,5 @@
 	<classpathentry kind="src" path="unittest"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="build/lib/runtime/clojure.jar"/>
-	<classpathentry exported="true" kind="lib" path="classes">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -21,7 +21,7 @@ Code Repository
 History
 -------
 
-Version 0.1.0 (--.--.2013)
+Version 0.4.3 (--.--.2013)
 --------------------------
 * Extracted from Baumeister
 
