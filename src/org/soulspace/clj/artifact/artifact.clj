@@ -1,3 +1,12 @@
+;
+;   Copyright (c) Ludger Solbach. All rights reserved.
+;   The use and distribution terms for this software are covered by the
+;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;   which can be found in the file license.txt at the root of this distribution.
+;   By using this software in any fashion, you are agreeing to be bound by
+;   the terms of this license.
+;   You must not remove this notice, or any other, from this software.
+;
 (ns org.soulspace.clj.artifact.artifact
   (:use [clojure.string :only [split trim]]
         [org.soulspace.clj string]
@@ -6,7 +15,7 @@
 (declare create-artifact)
 
 ;
-; Artifact abstractions
+; Artifact abstraction
 ;
 (defprotocol Artifact
   (artifact-name [artifact] "Returns the name of the artifact.")
@@ -84,7 +93,6 @@
          "." type))
   )
 
-
 (defn create-artifact
   ([project module version]
     (ArtifactImpl. project module (new-version version) module "jar"))
@@ -94,7 +102,6 @@
     (ArtifactImpl. project module (new-version version) name type))
   ([project module version name type classifier]
     (MavenArtifactImpl. project module (new-version version) name type classifier)))
-
 
 (defn matches-identifier? [pattern name]
   (or (nil? pattern)
@@ -108,7 +115,7 @@
       ; TODO use matching
       (= pattern type)))
 ;
-;
+; ArtifactPattern abstraction
 ;
 (defprotocol ArtifactPattern
   (matches-artifact? [pattern artifact] "match an artifact pattern against an artifact")
@@ -141,7 +148,7 @@
   ([project module range name type]
     (ArtifactPatternImpl. project module (new-version-range range) name type)))
 
-(def artifact-hierarchy (make-hierarchy))
+;(def artifact-hierarchy (make-hierarchy))
 
 ; TODO use hierarchy
 (defmulti new-artifact type)
