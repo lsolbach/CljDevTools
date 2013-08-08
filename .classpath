@@ -6,10 +6,7 @@
 	<classpathentry kind="lib" path="build/lib/runtime/clojure.jar"/>
 	<classpathentry kind="lib" path="build/lib/runtime/data.xml.jar"/>
 	<classpathentry kind="lib" path="build/lib/runtime/data.zip.jar"/>
-	<classpathentry exported="true" kind="lib" path="classes">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="build/lib/runtime/CljApplicationLibrary.jar"/>
+	<classpathentry kind="lib" path="build/lib/runtime/CljLibrary.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
