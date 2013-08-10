@@ -44,7 +44,7 @@
   )
 
 (deftest compare-same
-  (is (same-version? (new-version nil) nil))
+  (is (same-version? (new-version nil) (new-version nil)))
   (is (same-version? (new-version "1") (new-version "1")))
   (is (same-version? (new-version "1.1") (new-version "1.1")))
   (is (same-version? (new-version "1.1.1") (new-version "1.1.1")))
@@ -109,7 +109,6 @@
   (is (false? (contains-version? (new-version-range) (new-version nil))))
   (is (false? (contains-version? (new-version-range) (new-version ""))))
   )
-
 
 ;(run-tests)
 
