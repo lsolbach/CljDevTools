@@ -150,16 +150,20 @@
 
 ;(def artifact-hierarchy (make-hierarchy))
 
+(defn parse-artifact-string
+  [s]
+  (map trim (split s #"(/|:|;|,)")))
+
 ; TODO use hierarchy
 (defmulti new-artifact type)
-(defmethod new-artifact String [arg] (apply create-artifact (map trim (split arg #"(/|:|;|,)"))))
+(defmethod new-artifact String [arg] (apply create-artifact (parse-artifact-string arg)))
 (defmethod new-artifact clojure.lang.IPersistentVector [arg] (apply create-artifact arg))
 (defmethod new-artifact clojure.lang.ISeq [arg] (apply create-artifact arg))
 (defmethod new-artifact ArtifactImpl [arg] arg)
 
 ; TODO use hierarchy
 (defmulti new-artifact-pattern type)
-(defmethod new-artifact-pattern String [arg] (apply create-artifact-pattern (map trim (split arg #"(/|:|;|,)"))))
+(defmethod new-artifact-pattern String [arg] (apply create-artifact-pattern (parse-artifact-string arg)))
 (defmethod new-artifact-pattern clojure.lang.IPersistentVector [arg] (apply create-artifact-pattern arg))
 (defmethod new-artifact-pattern clojure.lang.ISeq [arg] (apply create-artifact-pattern arg))
 (defmethod new-artifact-pattern ArtifactPatternImpl [arg] (apply create-artifact-pattern arg))
