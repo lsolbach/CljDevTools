@@ -27,7 +27,7 @@
     (with-open [rdr (reader file)]
       (doall (line-seq (reader))))))
 
-; TODO line separator is encoding dependant!?!
+; TODO line separator is encoding dependent!?!
 (defn parse-protected-areas [area-marker lines]
   "Parse the lines into a protected area map."
   (let [begin-re (begin-pattern area-marker)]

@@ -183,6 +183,7 @@
     (= "DataType" (:element gen)) (seq (.getDataTypeList model))
     (= "Dependency" (:element gen)) (seq (.getDependencyList model))
     (= "DestroyAction" (:element gen)) (seq (.getDestroyActionList model))
+    (= "Enumeration" (:element gen)) (seq (.getEnumerationList model))
     (= "Expression" (:element gen)) (seq (.getExpressionList model))
     (= "Extend" (:element gen)) (seq (.getExtendList model))
     (= "ExtensionPoint" (:element gen)) (seq (.getExtensionPointList model))
