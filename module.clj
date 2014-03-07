@@ -7,8 +7,12 @@
  :project-lead "Ludger Solbach"
  :provider "soulspace.org"
  :license ["Eclipse Public License 1.0" "http://www.eclipse.org/legal/epl-v10.html"]
- :plugins ["global" "dependencies" "clojure" "clojuretest" "package" "release"]
+ :plugins ["global"
+           ["org.soulspace.baumeister/DependencyPlugin"]
+           ["org.soulspace.baumeister/ClojurePlugin"]
+           ["org.soulspace.baumeister/ClojureTestPlugin"]
+           ["org.soulspace.baumeister/PackagePlugin"]]
  :dependencies [["org.clojure/clojure, 1.5.1"]
                 ["org.clojure/data.zip, 0.1.1"]
-                ["org.soulspace.clj/CljXmlLibrary, 0.3.0"]]
+                ["org.soulspace.clj/CljXmlLibrary, 0.4.0"]]
  ]
