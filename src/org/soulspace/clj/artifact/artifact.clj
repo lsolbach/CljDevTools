@@ -60,8 +60,7 @@
   (compatible-artifact-version? [this other] 
     (and (same-module? this other) (same-version? (:version this) (:version other))))
   (new-artifact-version [artifact version]
-    (create-artifact (:project artifact) (:module artifact) version (:name artifact) (:type artifact)))
-  )
+    (create-artifact (:project artifact) (:module artifact) version (:name artifact) (:type artifact))))
 
 ;
 ; TODO needed?
@@ -94,6 +93,8 @@
   )
 
 (defn create-artifact
+  ([project module]
+    (ArtifactImpl. project module (new-version nil) module "jar"))
   ([project module version]
     (ArtifactImpl. project module (new-version version) module "jar"))
   ([project module version name]
