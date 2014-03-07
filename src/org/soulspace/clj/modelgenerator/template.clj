@@ -8,13 +8,10 @@
 ;   You must not remove this notice, or any other, from this software.
 ;
 (ns org.soulspace.clj.modelgenerator.template
-  (:use
-    [org.soulspace.clj file file-search]
-    )
-  (:import
-    [java.io File]
-    [org.soulspace.template.impl TemplateEngineImpl]
-    [org.soulspace.template.datasource.impl BeanDataSourceImpl]))
+  (:use [org.soulspace.clj file file-search])
+  (:import [java.io File]
+           [org.soulspace.template.impl TemplateEngineImpl]
+           [org.soulspace.template.datasource.impl BeanDataSourceImpl]))
 
 ; TemplateEngine functions
 (defn get-template-files [ctx gen]

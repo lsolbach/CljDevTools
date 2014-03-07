@@ -10,7 +10,7 @@
 (ns org.soulspace.clj.modelgenerator.design-model
   (:use [clojure.java.io :exclude [delete-file]]
         [clojure.set :only [intersection]]
-        [org.soulspace.clj string function])
+        [org.soulspace.clj string namespace])
   (:import [java.io File]
            [org.soulspace.template.impl TemplateEngineImpl]
            [org.soulspace.template.datasource.impl BeanDataSourceImpl]
