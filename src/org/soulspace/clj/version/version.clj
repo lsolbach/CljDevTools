@@ -13,28 +13,29 @@
 ;
 ; version comparison utils
 ;
-(defn digits-only? [x]
-  "test if x contains digits only"
+(defn digits-only?
+  "Tests if x contains only digits."
+  [x]
   (and (not (nil? x)) (re-matches #"^[0-9]+$" x)))
 
-(defn compare-revision [c1 c2]
-  "compare a revision"
+(defn compare-revision
+  "Compares two revision components."
+  [c1 c2]
   (if (and (digits-only? c1) (digits-only? c2)) ; compare numerically or lexically?
     (compare (Long/valueOf c1) (Long/valueOf c2))
     (compare c1 c2)))
 
-(defn split-version 
+(defn split-version-string
+  "Splits a version string into revision components."
   ([version]
-    "split version string at dots"
     (split version #"[.]"))
   ([version re]
-    "split version string at regular expression"
-    (split version re))
-  ) 
+    (split version re))) 
 
 ; TODO still needed?
-(defn version-match? [pattern version]
-  "match a version against a version pattern"
+(defn version-match?
+  "Match a version against a version pattern"
+  [pattern version]
   (or (nil? pattern)
       (empty? pattern)
       ; TODO use matching
@@ -52,6 +53,7 @@
   (unset-version? [v] "Returns true, if the version is not set (nil or empty string)."))
 
 (defprotocol IncrementableVersion
+  "Protocol for incrementable versions."
   (inc-version [v] "Increases the current version by one increment."))
 
 (defprotocol VersionRange
@@ -66,8 +68,9 @@
           v2 (:string version2)]
       (if (or (nil? v1) (nil? v2))
         (compare v1 v2)
-        (loop [c1 (split-version v1)
-               c2 (split-version v2)]
+        (loop [c1 (split-version-string v1)
+               c2 (split-version-string v2)]
+          ; split the versions and compare them part for part 
           (if (and (seq c1) (seq c1))
             (if (not= (first c1) (first c2))
               (compare-revision (first c1) (first c2))
@@ -78,10 +81,10 @@
   (same-version? [v1 v2] (= (compare-version v1 v2) 0))
   (unset-version? [v] (empty? (:string v)))
   VersionRange
-  (contains-version? [v1 v2] (same-version? v1 v2))
-  )
+  (contains-version? [v1 v2] (same-version? v1 v2)))
 
 (defn create-version [string]
+  "Creates a new version."
   (VersionImpl. string))
 
 (defmulti new-version type)
@@ -101,6 +104,7 @@
       :default false)))
 
 (defn create-version-range
+  "Creates a new version range."
   ([]
     (VersionRangeImpl. nil nil))
   ([from]
@@ -117,6 +121,7 @@
 (defmethod new-version-range1 nil [arg] (create-version-range nil))
 
 (defn new-version-range
+  "Builds a new version range."
   ([]
     (create-version-range))
   ([arg]
