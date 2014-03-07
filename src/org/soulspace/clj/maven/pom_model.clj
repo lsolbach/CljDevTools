@@ -28,6 +28,7 @@
   [(:group-id exclusion) (:artifact-id exclusion)]
   )
 
+; TODO return all fields
 (defn pom-dependency-data [dependency]
   "Creates dependency data from a pom dependency."
   [[(:group-id dependency) (:artifact-id dependency) (:version dependency)
