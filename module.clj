@@ -2,7 +2,7 @@
  :module "CljModelGenerator"
  :project "org.soulspace.clj"
  :type :framework
- :version "0.5.0"
+ :version "0.5.1"
  :description "Generator framework for model driven software development"
  :plugins ["global"
            ["org.soulspace.baumeister/DependencyPlugin"]

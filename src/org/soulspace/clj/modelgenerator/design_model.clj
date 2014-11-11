@@ -29,7 +29,7 @@
     (.getQualifiedName element)
     (.getNamespace element)))
 
-(defn base-name [name-str element]
+(defn element-base-name [name-str element]
   (if (starts-with "[" name-str)
     (cond
       (or (= name-str "[EMPTY]") (= name-str "[]"))
@@ -76,8 +76,8 @@
       (str (ns-to-path (:namespacePrefix gen)) "/"))
     (if (:baseNamespace gen)
       (if (:useNameAsNamespace gen)
-        (str (ns-to-path (base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
-        (str (ns-to-path (base-name (:baseNamespace gen) element)) "/"))
+        (str (ns-to-path (element-base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
+        (str (ns-to-path (element-base-name (:baseNamespace gen) element)) "/"))
       (if-not (nil? (element-namespace gen element))
         (str (ns-to-path (element-namespace gen element)) "/")))
     (when (:namespaceSuffix gen)
@@ -87,7 +87,7 @@
   (str
     (:prefix gen)
     (if (:baseName gen)
-      (base-name (:baseName gen) element)
+      (element-base-name (:baseName gen) element)
       (.getName element))
     (:suffix gen)
     (when (:extension gen)
