@@ -61,7 +61,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/issuemanagement {}
+    (pom/issue-management {}
                   (when (:system this) (pom/system {} (:system this)))
                   (when (:url this) (pom/url {} (:url this))))))
 
@@ -70,7 +70,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/cimanagement {}
+    (pom/ci-management {}
                   (when (:system this) (pom/system {} (:system this)))
                   (when (:url this) (pom/url {} (:url this)))
                   (when (seq (:notifiers this)) (pom/notifiers {} (map to-xml (:notifiers this)))))))
@@ -81,8 +81,8 @@
   (from-xml [this xml] )
   (to-xml [this] 
     (pom/parent {}
-                (pom/groupid {} (:group-id this))
-                (pom/artifactid {} (:artifact-id this))
+                (pom/group-id {} (:group-id this))
+                (pom/artifact-id {} (:artifact-id this))
                 (pom/version {} (:version this)))))
   
 (defrecord Dependency
@@ -91,13 +91,13 @@
   (from-xml [this xml] )
   (to-xml [this] 
     (pom/dependency {}
-                    (pom/groupid {} (:group-id this))
-                    (pom/artifactid {} (:artifact-id this))
+                    (pom/group-id {} (:group-id this))
+                    (pom/artifact-id {} (:artifact-id this))
                     (when (:version this) (pom/version {} (:version this)))
                     (when (:type this) (pom/type {} (:type this)))
                     (when (:classifier this) (pom/classifier {} (:classifier this)))
                     (when (:scope this) (pom/scope {} (:scope this)))
-                    (when (:system-path this) (pom/systempath {} (:system-path this)))
+                    (when (:system-path this) (pom/system-path {} (:system-path this)))
                     (when (:optional this) (pom/optional {} (:optional this)))
                     (when (seq (:exclusions this))
                       (pom/exclusions {} (map to-xml (:exclusions this)))))))
@@ -108,8 +108,8 @@
   (from-xml [this xml] )
   (to-xml [this] 
     (pom/exclusion {}
-                 (when (:group-id this) (pom/groupid {} (:group-id this)))
-                 (when (:artifact-id this) (pom/artifactid {} (:artifact-id this))))))
+                 (when (:group-id this) (pom/group-id {} (:group-id this)))
+                 (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this))))))
 
 (defrecord Contributor
   [name email url organization organization-url roles timezone properties]
@@ -121,7 +121,7 @@
                      (when (:email this) (pom/email {} (:email this)))
                      (when (:url this) (pom/url {} (:url this)))
                      (when (:organization this) (pom/organization {} (:organization this)))
-                     (when (:organization-url this) (pom/organizationurl {} (:organization-url this)))
+                     (when (:organization-url this) (pom/organization-url {} (:organization-url this)))
                      (when (seq (:roles this))
                        (pom/roles {} (map to-xml (:roles this))))
                      (when (:timezone this) (pom/timezone {} (:timezone this)))
@@ -139,7 +139,7 @@
                    (when (:email this) (pom/email {} (:email this)))
                    (when (:url this) (pom/url {} (:url this)))
                    (when (:organization this) (pom/organization {} (:organization this)))
-                   (when (:organization-url this) (pom/organizationurl {} (:organization-url this)))
+                   (when (:organization-url this) (pom/organization-url {} (:organization-url this)))
                    (when (seq (:roles this))
                      (pom/roles {} (map to-xml (:roles this))))
                    (when (:timezone this) (pom/timezone {} (:timezone this)))
@@ -168,7 +168,7 @@
                  (when (seq (:repositories this))
                    (pom/repositories {} (map to-xml (:repositories this))))
                  (when (seq (:plugin-repositories this))
-                   (pom/pluginrepositories {} (map to-xml (:plugin-repositories this))))
+                   (pom/plugin-repositories {} (map to-xml (:plugin-repositories this))))
                  (when (seq (:dependencies this))
                    (pom/dependencies {} ((map to-xml (:dependencies this)))))
                  (when (seq (:reports this))
@@ -185,7 +185,7 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/activation {}
-                    (when (:active-by-default this) (pom/activebydefault {} (:active-by-default this)))
+                    (when (:active-by-default this) (pom/active-by-default {} (:active-by-default this)))
                     (when (:jdk this) (pom/jdk {} (:jdk this)))
                     (when (:os this) (to-xml (:os this)))
                     (when (:property this) (to-xml (:property this)))
@@ -225,7 +225,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/dependencymanagement {}
+    (pom/dependency-management {}
                               (when (seq (:dependencies this))
                                 (pom/dependencies {} (map to-xml (:dependencies this)))))))
 
@@ -235,29 +235,29 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/reporting {}
-                   (when (:exclude-defaults this) (pom/excludedefaults {} (:exclude-defaults this)))
-                   (when (:output-directory this) (pom/outputdirectory {} (:output-directory this)))
-                   (when (:plugins this) (pom/outputdirectory {} (:plugins this))))))
+                   (when (:exclude-defaults this) (pom/exclude-defaults {} (:exclude-defaults this)))
+                   (when (:output-directory this) (pom/output-directory {} (:output-directory this)))
+                   (when (:plugins this) (pom/output-directory {} (:plugins this))))))
 
 (defrecord ReportPlugin
   [group-id artifact-id version inherited configuration report-sets]
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/reportplugin {}
-                      (when (:group-id this) (pom/groupid {} (:group-id this)))
-                      (when (:artifact-id this) (pom/artifactid {} (:artifact-id this)))
+    (pom/report-plugin {}
+                      (when (:group-id this) (pom/group-id {} (:group-id this)))
+                      (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this)))
                       (when (:version this) (pom/version {} (:version this)))
                       (when (:inherited this) (pom/inherited {} (:inherited this)))
                       (when (:configuration this) (to-xml (:configuration this)))
-                      (when (seq (:report-sets this)) (pom/reportsets {} (map to-xml (:report-sets this)))))))
+                      (when (seq (:report-sets this)) (pom/report-sets {} (map to-xml (:report-sets this)))))))
 
 (defrecord ReportSet
   [id configuration inherited reports]
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/reportset {}
+    (pom/report-set {}
                    (when (:id this) (pom/id {} (:id this)))
                    (when (:configuration this) (to-xml (:configuration this)))
                    (when (:inherited this) (pom/inherited {} (:inherited this)))
@@ -275,7 +275,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/buildbase {}
+    (pom/build-base {}
                    )))
 
 (defrecord Plugin
@@ -284,8 +284,8 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/plugin {}
-                (when (:group-id this) (pom/groupid {} (:group-id this)))
-                (when (:artifact-id this) (pom/artifactid {} (:artifact-id this)))
+                (when (:group-id this) (pom/group-id {} (:group-id this)))
+                (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this)))
                 (when (:version this) (pom/version {} (:version this)))
                 (when (seq (:extensions this)) (pom/extensions {} (map to-xml (:extensions this))))
                 (when (seq (:executions this)) (pom/executions {} (map to-xml (:executions this))))
@@ -299,7 +299,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/pluginexecution {}
+    (pom/plugin-execution {}
                          )))
 
 (defrecord PluginManagement
@@ -307,7 +307,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/pluginmanagement {} (when (seq (:plugins this)) (pom/plugins {} (map to-xml (:plugins this)))))))
+    (pom/plugin-management {} (when (seq (:plugins this)) (pom/plugins {} (map to-xml (:plugins this)))))))
 
 (defrecord Goal
   [goal]
@@ -343,11 +343,11 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/distributionmanagement {}
+    (pom/distribution-management {}
                                 (when (:repository this) (to-xml (:repository this)))
                                 (when (:snapshot-repository this) (to-xml (:snapshot-repository this)))
                                 (when (:site this) (to-xml (:site this)))
-                                (when (:download-url this) (pom/downloadurl {} (:download-url this)))
+                                (when (:download-url this) (pom/download-url {} (:download-url this)))
                                 (when (:relocation this) (to-xml (:relocation this)))
                                 (when (:status this) (pom/status {} (:status this))))))
 
@@ -367,8 +367,8 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/relocation {}
-                    (when (:group-id this) (pom/groupid {} (:group-id this)))
-                    (when (:artifact-id this) (pom/artifactid {} (:artifact-id this)))
+                    (when (:group-id this) (pom/group-id {} (:group-id this)))
+                    (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this)))
                     (when (:version this) (pom/version {} (:version this)))
                     (when (:message this) (pom/message {} (:message this))))))
 
@@ -377,8 +377,8 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/deploymentrepository {}
-                    (when (:unique-version this) (pom/uniqueversion {} (:unique-version this)))
+    (pom/deployment-repository {}
+                    (when (:unique-version this) (pom/unique-version {} (:unique-version this)))
                     (when (:id this) (pom/id {} (:id this)))
                     (when (:name this) (pom/name {} (:name this)))
                     (when (:url this) (pom/url {} (:url this)))
@@ -402,17 +402,17 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/repositorypolicy {}
+    (pom/repository-policy {}
                           (when (:enabled this) (pom/enabled {} (:enabled this)))
-                          (when (:update-policy this) (pom/updatepolicy {} (:update-policy this)))
-                          (when (:checksum-policy this) (pom/checksumpolicy {} (:checksum-policy this))))))
+                          (when (:update-policy this) (pom/update-policy {} (:update-policy this)))
+                          (when (:checksum-policy this) (pom/checksum-policy {} (:checksum-policy this))))))
 
 (defrecord MailingList
   [name subscribe unsubscribe post archive other-archives]
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/mailinglist {}
+    (pom/mailing-list {}
                      (when (:name this) (pom/name {} (:name this)))
                      (when (:subscribe this) (pom/subscribe {} (:subscribe this)))
                      (when (:unsubscribe this) (pom/unsubscribe {} (:unsubscribe this)))
@@ -425,7 +425,7 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/otherarchive {} (:archive this))))
+    (pom/other-archive {} (:archive this))))
 
 (defrecord Build
   [source-directory script-source-directory test-source-directory
@@ -435,16 +435,16 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/build {}
-               (when (:source-directory this) (pom/sourcedirectory {} (:source-directory this)))
-               (when (:script-source-directory this) (pom/scriptsourcedirectory {} (:script-source-directory this)))
-               (when (:test-source-directory this) (pom/testsourcedirectory {} (:test-source-directory this)))
-               (when (:output-directory this) (pom/outputdirectory {} (:output-directory this)))
-               (when (:test-output-directory this) (pom/testoutputdirectory {} (:test-output-directory this)))
+               (when (:source-directory this) (pom/source-directory {} (:source-directory this)))
+               (when (:script-source-directory this) (pom/script-source-directory {} (:script-source-directory this)))
+               (when (:test-source-directory this) (pom/test-source-directory {} (:test-source-directory this)))
+               (when (:output-directory this) (pom/output-directory {} (:output-directory this)))
+               (when (:test-output-directory this) (pom/test-output-directory {} (:test-output-directory this)))
                (when (seq (:extensions this)) (pom/extensions {} (map to-xml (:extensions this))))
-               (when (:default-goal this) (pom/defaultgoal {} (:default-goal this)))
+               (when (:default-goal this) (pom/default-goal {} (:default-goal this)))
                (when (seq (:resources this)) (pom/resources {} (map to-xml (:resources this))))
                (when (:directory this) (pom/directory {} (:directory this)))
-               (when (:final-name this) (pom/finalname {} (:final-name this)))
+               (when (:final-name this) (pom/final-name {} (:final-name this)))
                (when (seq (:filters this)) (pom/filters {} (map to-xml (:filters this)))))))
 
 (defrecord Filter
@@ -459,8 +459,8 @@
   XMLMarshalling
   (from-xml [this xml] )
   (to-xml [this]
-    (pom/testresource {}
-                   (when (:target-path this) (pom/targetpath {} (:target-path this)))
+    (pom/test-resource {}
+                   (when (:target-path this) (pom/target-path {} (:target-path this)))
                    (when (:filtering this) (pom/filtering {} (:filtering this)))
                    (when (:directory this) (pom/directory {} (:directory this)))
                    (when (seq (:includes this)) (pom/includes {} (map to-xml (:includes this))))
@@ -472,8 +472,8 @@
   (from-xml [this xml] )
   (to-xml [this]
     (pom/extension {}
-                   (when (:group-id this) (pom/groupid {} (:group-id this)))
-                   (when (:artifact-id this) (pom/artifactid {} (:artifact-id this)))
+                   (when (:group-id this) (pom/group-id {} (:group-id this)))
+                   (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this)))
                    (when (:version this) (pom/version {} (:version this))))))
 
 (defrecord Notifier
@@ -483,10 +483,10 @@
   (to-xml [this]
     (pom/notifier {}
                   (when (:type this) (pom/type {} (:type this)))
-                  (when (:send-on-error this) (pom/sendonerror {} (:send-on-error this)))
-                  (when (:send-on-failure this) (pom/sendonfailure {} (:send-on-failure this)))
-                  (when (:send-on-success this) (pom/sendonsuccess {} (:send-on-success this)))
-                  (when (:send-on-warning this) (pom/sendonwarning {} (:send-on-warning this)))
+                  (when (:send-on-error this) (pom/send-on-error {} (:send-on-error this)))
+                  (when (:send-on-failure this) (pom/send-on-failure {} (:send-on-failure this)))
+                  (when (:send-on-success this) (pom/send-on-success {} (:send-on-success this)))
+                  (when (:send-on-warning this) (pom/send-on-warning {} (:send-on-warning this)))
                   (when (:address this) (pom/address {} (:address this)))
                   (when (:configuration this) (to-xml (:configuration this))))))
 
@@ -508,7 +508,7 @@
   (to-xml [this]
     (pom/scm {}
              (when (:connection this) (pom/connection (:connection this)))
-             (when (:developer-connection this) (pom/developerconnection (:developer-connection this)))
+             (when (:developer-connection this) (pom/developer-connection (:developer-connection this)))
              (when (:tag this) (pom/tag (:tag this)))
              (when (:url this) (pom/url (:url this))))))
 
@@ -579,19 +579,19 @@
                 nil)))
   (to-xml [this]
     (pom/project {}
-                 (when (:model-version this) (pom/modelversion {} (:model-version this)))
-                 (when (:group-id this) (pom/groupid {} (:group-id this)))
-                 (pom/artifactid {} (:artifact-id this))
+                 (when (:model-version this) (pom/model-version {} (:model-version this)))
+                 (when (:group-id this) (pom/group-id {} (:group-id this)))
+                 (pom/artifact-id {} (:artifact-id this))
                  (when (:version this) (pom/version {} (:version this)))
                  (when (:name this) (pom/name {} (:name this)))
                  (when (:description this) (pom/description {} (:description this)))
-                 (when (:inception-year this) (pom/inceptionyear {} (:inception-year this)))
+                 (when (:inception-year this) (pom/inception-year {} (:inception-year this)))
                  (when (:url this) (pom/name {} (:url this)))
                  (when (:parent this) (to-xml (:parent this)))
                  (when (seq (:dependencies this))
                    (pom/dependencies {} (map to-xml (:dependencies this))))
                  (when (seq (:dependencyManagement this))
-                   (pom/dependencymanagement {} (map to-xml (:dependencies this))))
+                   (pom/dependency-management {} (map to-xml (:dependencies this))))
                  (when (seq (:properties this))
                    (pom/properties {} )) ; TODO
                  )))

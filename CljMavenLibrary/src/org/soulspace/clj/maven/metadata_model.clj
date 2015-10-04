@@ -37,8 +37,8 @@
   Metadata
   (metadata-xml [this] 
     (md/metadata {}
-                 (md/groupid {} group-id)
-                 (md/artifactid {} artifact-id)
+                 (md/group-id {} group-id)
+                 (md/artifact-id {} artifact-id)
                  (when-not (nil? version) (md/version {} version))
                  (versioning-xml versioning))))
 
@@ -51,8 +51,8 @@
                    (md/release {} release)
                    (md/versions {} (map md/version versions))
                    (snapshot-xml snapshot)
-                   (md/snapshotversions {} (map md/snapshotversion snapshot-versions))
-                   (md/lastupdated {} last-updated))))
+                   (md/snapshot-versions {} (map md/snapshot-version snapshot-versions))
+                   (md/last-updated {} last-updated))))
 
 (defrecord MetadataSnapshotImpl
   [timestamp build-number local-copy]
@@ -60,14 +60,14 @@
   (snapshot-xml [this]
     (md/snapshot {}
                  (md/timestamp {} timestamp)
-                 (md/buildnumber {} build-number)
-                 (md/localcopy {} local-copy))))
+                 (md/build-number {} build-number)
+                 (md/local-copy {} local-copy))))
 
 (defrecord MetadataSnapshotVersionImpl
   [classifier extension value updated]
   MetadataSnapshotVersion
   (snapshot-version-xml [this]
-    (md/snapshotversion {}
+    (md/snapshot-version {}
                         (md/classifier {} classifier)
                         (md/extension {} extension)
                         (md/value {} value)
@@ -80,7 +80,7 @@
     (md/plugin {}
                (md/name {} name)
                (md/prefix {} prefix)
-               (md/artifactid {} artifact-id))))
+               (md/artifact-id {} artifact-id))))
 
 (defn parse-metadata-plugin
   [zipper]
