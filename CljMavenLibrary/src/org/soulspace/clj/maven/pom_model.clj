@@ -37,7 +37,7 @@
    (map pom-exclusion-data (:exclusions dependency))])
 
 (defn parse-pom-properties [zipped]
-  "create property map for pom properties"
+  "Creates property map for pom properties"
   ; zip to properties if any and return a map of child element names and their contents
   (if-let [properties (zx/xml1-> zipped :properties)]
     (if-let [props (zip/children properties)]
