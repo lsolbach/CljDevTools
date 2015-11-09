@@ -15,8 +15,10 @@
   [^:attribute kind ^:attribute path attributes]
   XMLMarshalling
   (to-xml [this]
-    (dsl/classpath-entry {:kind (:kind this) (:path path)}
-                         ))
+    (dsl/classpathentry 
+      {:kind (:kind this) :path (:path path)}
+      ; TODO add Attributes
+      ))
   (from-xml [this xml]
     ))
 
