@@ -7,8 +7,9 @@
 ;   the terms of this license.
 ;   You must not remove this notice, or any other, from this software.
 ;
-(ns org.soulspace.eclipse.xml.project-dsl
-  (:use [org.soulspace.clj.xml dsl-builder]))
+(ns org.soulspace.clj.eclipse.xml.project-dsl
+  (:use [org.soulspace.clj.xml dsl-builder])
+  (:refer-clojure :exclude [comment key name type]))
 
 (deftags ["arguments" "buildCommand" "buildSpec" "comment" "dictionary" "key"
           "link" "linkedResources" "location" "name" "nature" "natures"

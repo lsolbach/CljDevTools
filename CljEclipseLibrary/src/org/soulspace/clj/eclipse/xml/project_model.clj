@@ -7,9 +7,9 @@
 ;   the terms of this license.
 ;   You must not remove this notice, or any other, from this software.
 ;
-(ns org.soulspace.eclipse.xml.classpath-dsl
-  (:use [org.soulspace.clj.xml dsl-builder]))
+(ns org.soulspace.clj.eclipse.xml.project-model
+  (:use [org.soulspace.clj.xml marshalling]
+        [org.soulspace.clj.eclipse.xml project-dsl]))
 
-(deftags ["attribute" "attributes" "classpath" "classpathentry"])
 
 

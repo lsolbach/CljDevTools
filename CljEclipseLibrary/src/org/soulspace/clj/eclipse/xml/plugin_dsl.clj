@@ -7,6 +7,7 @@
 ;   the terms of this license.
 ;   You must not remove this notice, or any other, from this software.
 ;
-(ns org.soulspace.eclipse.xml.feature-model
-  (:use [org.soulspace.clj.xml marshalling]))
+(ns org.soulspace.clj.eclipse.xml.plugin-dsl
+  (:use [org.soulspace.clj.xml dsl-builder]))
 
+(deftags ["extension" "extension-point" "fragment" "plugin"])

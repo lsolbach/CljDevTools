@@ -7,37 +7,23 @@
 ;   the terms of this license.
 ;   You must not remove this notice, or any other, from this software.
 ;
-(ns org.soulspace.eclipse.xml.plugin-model
-  (:use [org.soulspace.clj.xml marshalling]))
+(ns org.soulspace.clj.eclipse.xml.classpath-model
+  (:use [org.soulspace.clj.xml marshalling])
+  (:require [org.soulspace.clj.eclipse.xml.classpath-dsl :as dsl]))
 
-(defrecord Plugin
-  [extension-point extension]
+(defrecord ClasspathEntry
+  [^:attribute kind ^:attribute path attributes]
   XMLMarshalling
   (to-xml [this]
-    )
+    (dsl/classpath-entry {:kind (:kind this) (:path path)}
+                         ))
   (from-xml [this xml]
     ))
 
-(defrecord Fragment 
-  [extension-point-list extension-list]
+(defrecord Attribute
+  [name value]
   XMLMarshalling
   (to-xml [this]
-    )
-  (from-xml [this xml]
-    ))
-
-(defrecord ExtensionPoint
-  [^:attribute name ^:attribute id ^:attribute schema]
-  XMLMarshalling
-    (to-xml [this]
-    )
-  (from-xml [this xml]
-    ))
-
-(defrecord Extension
-  [^:attribute point ^:attribute id ^:attribute name]
-  XMLMarshalling
-    (to-xml [this]
-    )
+    ())
   (from-xml [this xml]
     ))
