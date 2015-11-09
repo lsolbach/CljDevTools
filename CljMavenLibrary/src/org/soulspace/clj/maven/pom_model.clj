@@ -78,18 +78,34 @@
 (defrecord Parent
   [group-id artifact-id version]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml]
+    (let [group-id (zx/xml1-> xml :groupId zx/text)
+          artifact-id (zx/xml1-> xml :artifactId zx/text)
+          version (zx/xml1-> xml :version zx/text)]
+      (Parent. group-id artifact-id version)))
   (to-xml [this] 
     (pom/parent {}
                 (pom/group-id {} (:group-id this))
                 (pom/artifact-id {} (:artifact-id this))
                 (pom/version {} (:version this)))))
-  
+
 (defrecord Dependency
   [group-id artifact-id version type classifier scope system-path exclusions optional]
   XMLMarshalling
-  (from-xml [this xml] )
-  (to-xml [this] 
+  (from-xml [this xml] 
+    (let [group-id (zx/xml1-> xml :groupId zx/text)
+          artifact-id (zx/xml1-> dep :artifactId zx/text)
+          version (zx/xml1-> dep :version zx/text)
+          type (zx/xml1-> dep :type zx/text)
+          classifier (zx/xml1-> dep :classifier zx/text)
+          scope (zx/xml1-> dep :scope zx/text)
+          system-path (zx/xml1-> dep :systemPath zx/text)
+          ; FIXME create exclusions with from-xml
+          exclusions (map (partial parse-pom-exclusion prop-map) (zx/xml-> dep :exclusions :exclusion))
+          optional (zx/xml1-> dep :optional zx/text)
+          ]
+      (Dependency. group-id artifact-id version type classifier scope system-path exclusions optional))
+  (to-xml [this]
     (pom/dependency {}
                     (pom/group-id {} (:group-id this))
                     (pom/artifact-id {} (:artifact-id this))
