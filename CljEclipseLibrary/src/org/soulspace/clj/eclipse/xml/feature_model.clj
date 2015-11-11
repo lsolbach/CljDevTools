@@ -8,6 +8,6 @@
 ;   You must not remove this notice, or any other, from this software.
 ;
 (ns org.soulspace.clj.eclipse.xml.feature-model
-  (:use [org.soulspace.clj.xml marshalling]
-        [org.soulspace.clj.eclipse.xml feature-dsl]))
+  (:use [org.soulspace.clj.xml marshalling])
+  (:require [org.soulspace.clj.eclipse.xml feature-dsl]))
 

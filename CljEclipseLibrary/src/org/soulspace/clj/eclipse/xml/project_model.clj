@@ -9,7 +9,11 @@
 ;
 (ns org.soulspace.clj.eclipse.xml.project-model
   (:use [org.soulspace.clj.xml marshalling])
-  (:require [org.soulspace.clj.eclipse.xml.project-dsl :as dsl]))
+  (:require [clojure.zip :as zip]
+            [clojure.data.xml :as xml]
+            [clojure.data.zip :as zf]
+            [clojure.data.zip.xml :as zx]
+            [org.soulspace.clj.eclipse.xml.project-dsl :as dsl]))
 
 (defrecord ProjectDescription
   [name comment projects build-spec natures]
@@ -29,6 +33,13 @@
           (if (seq natures)
             (map to-xml projects)))))
     (from-xml [this xml]
+      ; FIXME check zipping here
+      (let [name (zx/xml1-> xml :name zx/text)
+            comment (zx/xml1-> xml :comment zx/text)
+            projects (zx/xml1-> xml :projects zx/text)
+            build-spec (zx/xml1-> xml :buildSpec zx/text)
+            natures (zx/xml1-> xml :natures zx/text)]
+        (ProjectDescription. name comment projects build-spec natures))
       ))
 
 (defrecord Name
