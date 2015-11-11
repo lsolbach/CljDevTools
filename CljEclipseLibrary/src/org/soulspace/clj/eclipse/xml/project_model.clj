@@ -8,8 +8,58 @@
 ;   You must not remove this notice, or any other, from this software.
 ;
 (ns org.soulspace.clj.eclipse.xml.project-model
-  (:use [org.soulspace.clj.xml marshalling]
-        [org.soulspace.clj.eclipse.xml project-dsl]))
+  (:use [org.soulspace.clj.xml marshalling])
+  (:require [org.soulspace.clj.eclipse.xml.project-dsl :as dsl]))
 
+(defrecord ProjectDescription
+  [name comment projects build-spec natures]
+  XMLMarshalling
+  (to-xml [this]
+    (dsl/project-description
+        {}
+      (to-xml name)
+      (to-xml comment)
+        (dsl/projects
+        (if (seq projects)
+            (map to-xml projects)))
+      (dsl/build-spec
+        (if (seq build-spec)
+          (map to-xml build-spec)))
+      (dsl/natures
+          (if (seq natures)
+            (map to-xml projects)))))
+    (from-xml [this xml]
+      ))
 
+(defrecord Name
+  [content]
+  XMLMarshalling
+  (to-xml [this]
+    (dsl/name {} content))
+  (from-xml [this xml]
+    ))
+
+(defrecord Project
+  []
+  XMLMarshalling
+  (to-xml [this]
+    )
+  (from-xml [this xml]
+    ))
+
+(defrecord BuildCommand
+  [name arguments]
+  XMLMarshalling
+  (to-xml [this]
+    )
+  (from-xml [this xml]
+    ))
+
+(defrecord Nature
+  [content]
+  XMLMarshalling
+  (to-xml [this]
+    (dsl/nature {} content))
+  (from-xml [this xml]
+    ))
 
