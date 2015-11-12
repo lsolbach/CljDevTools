@@ -8,7 +8,7 @@
 ;   You must not remove this notice, or any other, from this software.
 ;
 (ns org.soulspace.clj.eclipse.xml.project-model
-  (:use [org.soulspace.clj.xml marshalling])
+  (:use [org.soulspace.clj.xml marshalling zip])
   (:require [clojure.zip :as zip]
             [clojure.data.xml :as xml]
             [clojure.data.zip :as zf]
@@ -32,45 +32,39 @@
       (dsl/natures
           (if (seq natures)
             (map to-xml projects)))))
-    (from-xml [this xml]
-      ; FIXME check zipping here
-      (let [name (zx/xml1-> xml :name zx/text)
-            comment (zx/xml1-> xml :comment zx/text)
-            projects (zx/xml1-> xml :projects zx/text)
-            build-spec (zx/xml1-> xml :buildSpec zx/text)
-            natures (zx/xml1-> xml :natures zx/text)]
-        (ProjectDescription. name comment projects build-spec natures))
-      ))
+  )
 
 (defrecord Name
   [content]
   XMLMarshalling
   (to-xml [this]
     (dsl/name {} content))
-  (from-xml [this xml]
-    ))
+  )
 
 (defrecord Project
   []
   XMLMarshalling
   (to-xml [this]
     )
-  (from-xml [this xml]
-    ))
+  )
 
 (defrecord BuildCommand
   [name arguments]
   XMLMarshalling
   (to-xml [this]
     )
-  (from-xml [this xml]
-    ))
+  )
 
 (defrecord Nature
   [content]
   XMLMarshalling
   (to-xml [this]
     (dsl/nature {} content))
-  (from-xml [this xml]
-    ))
+  )
+
+;
+; unmarshal XML with multi function, which dispatches on the tag keyword
+;
+(defmulti unmarshal-xml current-zipper-tag)
+
 

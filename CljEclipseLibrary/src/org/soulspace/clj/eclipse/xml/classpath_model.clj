@@ -8,8 +8,7 @@
 ;   You must not remove this notice, or any other, from this software.
 ;
 (ns org.soulspace.clj.eclipse.xml.classpath-model
-  (:use [org.soulspace.clj.xml marshalling]
-        [org.soulspace.clj.xml.zip])
+  (:use [org.soulspace.clj.xml marshalling zip])
   (:require [clojure.zip :as zip]
             [clojure.data.xml :as xml]
             [clojure.data.zip :as zf]
@@ -22,6 +21,7 @@
   (to-xml [this]
     (dsl/attribute
       {:name (:name this) :value (:value this)}))
+  XMLUnmarshalling
   (from-xml [_ xml]
     (when xml
       (->Attribute (zx/attr xml :name)
@@ -29,15 +29,16 @@
 
 (defrecord Attributes
   [^:zero-to-many attribute]
-    XMLMarshalling
-    (to-xml [this]
-      (if (seq attribute)
-        (dsl/attributes
+  XMLMarshalling
+  (to-xml [this]
+    (if (seq attribute)
+      (dsl/attributes
         {}
         (map to-xml attribute))))
-    (from-xml [_ xml]
-      (if (seq xml)
-        (->Attributes (map (partial from-xml (map->Attribute {})) (zx/xml-> xml :attribute))))))
+  XMLUnmarshalling
+  (from-xml [_ xml]
+    (if (seq xml)
+      (->Attributes (map (partial from-xml (map->Attribute {})) (zx/xml-> xml :attribute))))))
 
 (defrecord Classpathentry
   [^:attribute kind ^:attribute path ^:optional attributes]
@@ -46,6 +47,7 @@
     (dsl/classpathentry 
       {:kind (:kind this) :path (:path this)}
       (when attributes (to-xml attributes))))
+  XMLUnmarshalling
   (from-xml [_ xml]
     (when xml
       (->Classpathentry (zx/attr xml :kind)
@@ -54,20 +56,21 @@
     
 (defrecord Classpath
   [^:zero-to-many classpathentry]
-    XMLMarshalling
-    (to-xml [this]
-      (dsl/classpath
-        {}
-        (if (seq classpathentry)
-          (map to-xml classpathentry))))
-    (from-xml [_ xml]
-      (if (seq xml) 
-        (->Classpath (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
+  XMLMarshalling
+  (to-xml [this]
+    (dsl/classpath
+      {}
+      (if (seq classpathentry)
+        (map to-xml classpathentry))))
+  XMLUnmarshalling
+  (from-xml [_ xml]
+    (if (seq xml) 
+      (->Classpath (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
 
 ;
 ; unmarshal XML with multi function, which dispatches on the tag keyword
 ;
-(defmulti unmarshal-xml #(:tag (first %)))
+(defmulti unmarshal-xml current-zipper-tag)
 
 (defmethod unmarshal-xml :classpath
   [xml]

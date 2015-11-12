@@ -4,30 +4,34 @@
         [org.soulspace.clj.eclipse.xml classpath-dsl classpath-model])
   (:require [clojure.data.xml :as xml]))
 
-(deftest marshalling-test
-  (is (= (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-              "<classpath>"
-              "<classpathentry kind=\"out\" path=\"bin\">"
-              "<attributes><attribute name=\"a\" value=\"1\"></attribute></attributes>"
-              "</classpathentry>"
-              "<classpathentry kind=\"src\" path=\"src\"></classpathentry>"
-              "</classpath>")
+(def xml1 (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    "<classpath>"
+                    "<classpathentry kind=\"out\" path=\"bin\">"
+                    "<attributes><attribute name=\"a\" value=\"1\"></attribute></attributes>"
+                    "</classpathentry>"
+                    "<classpathentry kind=\"src\" path=\"src\"></classpathentry>"
+                    "</classpath>"))
+
+(deftest to-xml-test
+  (is (= xml1
          (xml/emit-str
            (to-xml (->Classpath
                      [(->Classpathentry "out" "bin" (->Attributes [(->Attribute "a" "1")]))
                       (->Classpathentry "src" "src" nil)]))))))
 
-(deftest unmarshalling-test
+(deftest from-xml-test
   (is (= (->Classpath
            [(->Classpathentry "out" "bin" (->Attributes [(->Attribute "a" "1")]))
             (->Classpathentry "src" "src" nil)]))
       (from-xml
         (map->Classpath {})
-        (xml-zipper
-          (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-               "<classpath>"
-               "<classpathentry kind=\"out\" path=\"bin\">"
-               "<attributes><attribute name=\"a\" value=\"1\"></attribute></attributes>"
-               "</classpathentry>"
-               "<classpathentry kind=\"src\" path=\"src\"></classpathentry>"
-               "</classpath>")))))
+        (xml-zipper xml1))))
+
+
+(deftest unmarshalling-test
+  (is (= (->Classpath
+           [(->Classpathentry "out" "bin" (->Attributes [(->Attribute "a" "1")]))
+            (->Classpathentry "src" "src" nil)]))
+      (unmarshal-xml
+        (xml-zipper xml1))))
+
