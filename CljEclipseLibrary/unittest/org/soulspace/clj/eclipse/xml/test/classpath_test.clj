@@ -1,5 +1,4 @@
 (ns org.soulspace.clj.eclipse.xml.test.classpath-test
-;  (:import [org.soulspace.clj.eclipse.xml.classpath-model Classpath Classpathentry Attributes Attribute])
   (:use [clojure.test]
         [org.soulspace.clj.xml marshalling zip]
         [org.soulspace.clj.eclipse.xml classpath-dsl classpath-model])
