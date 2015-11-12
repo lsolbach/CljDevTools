@@ -24,7 +24,7 @@
       {:name (:name this) :value (:value this)}))
   (from-xml [_ xml]
     (when xml
-      (Attribute. (zx/attr xml :name)
+      (->Attribute (zx/attr xml :name)
                   (zx/attr xml :value)))))
 
 (defrecord Attributes
@@ -37,7 +37,7 @@
         (map to-xml attribute))))
     (from-xml [_ xml]
       (if (seq xml)
-        (Attributes. (map (partial from-xml (map->Attribute {})) (zx/xml-> xml :attribute))))))
+        (->Attributes (map (partial from-xml (map->Attribute {})) (zx/xml-> xml :attribute))))))
 
 (defrecord Classpathentry
   [^:attribute kind ^:attribute path ^:optional attributes]
@@ -48,9 +48,9 @@
       (when attributes (to-xml attributes))))
   (from-xml [_ xml]
     (when xml
-      (Classpathentry. (zx/attr xml :kind)
-             (zx/attr xml :path)
-             (from-xml (map->Attributes {}) (zx/xml1-> xml :attributes))))))
+      (->Classpathentry (zx/attr xml :kind)
+                       (zx/attr xml :path)
+                       (from-xml (map->Attributes {}) (zx/xml1-> xml :attributes))))))
     
 (defrecord Classpath
   [^:zero-to-many classpathentry]
@@ -62,5 +62,36 @@
           (map to-xml classpathentry))))
     (from-xml [_ xml]
       (if (seq xml) 
-        (Classpath. (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
+        (->Classpath (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
 
+;
+; unmarshal XML with multi function, which dispatches on the tag keyword
+;
+(defmulti unmarshal-xml #(:tag (first %)))
+
+(defmethod unmarshal-xml :classpath
+  [xml]
+  (if (seq xml)
+    (->Classpath (map unmarshal-xml (zx/xml-> xml :classpathentry)))))
+
+(defmethod unmarshal-xml :classpathentry
+  [xml]
+  (when xml
+    (->Classpathentry (zx/attr xml :kind)
+                     (zx/attr xml :path)
+                     (unmarshal-xml (zx/xml1-> xml :attributes)))))
+
+(defmethod unmarshal-xml :attributes
+  [xml]
+  (if (seq xml)
+    (->Attributes (map unmarshal-xml (zx/xml-> xml :attribute)))))
+
+(defmethod unmarshal-xml :attribute
+  [xml]
+  (when xml
+      (->Attribute (zx/attr xml :name)
+                  (zx/attr xml :value))))
+
+(defmethod unmarshal-xml nil
+  [xml]
+  )
