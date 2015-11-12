@@ -9,7 +9,7 @@
 ;
 (ns org.soulspace.clj.eclipse.xml.feature-dsl
   (:use [org.soulspace.clj.xml dsl-builder])
-  (:refer-clojure :exclude [import]))
+  (:refer-clojure :exclude [import update]))
 
 (deftags ["copyright" "data" "description" "discovery" "feature" "import"
           "includes" "install-handler" "license" "plugin" "requires" "update" "url"])

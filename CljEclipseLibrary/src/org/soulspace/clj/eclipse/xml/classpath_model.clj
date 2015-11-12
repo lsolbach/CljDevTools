@@ -17,50 +17,50 @@
             [org.soulspace.clj.eclipse.xml.classpath-dsl :as dsl]))
 
 (defrecord Attribute
-  [name value]
+  [^:attribute name ^:attribute value]
   XMLMarshalling
   (to-xml [this]
     (dsl/attribute
       {:name (:name this) :value (:value this)}))
-  (from-xml [this xml]
+  (from-xml [_ xml]
     (when xml
       (Attribute. (zx/attr xml :name)
                   (zx/attr xml :value)))))
 
 (defrecord Attributes
-  [attributes]
+  [^:zero-to-many attribute]
     XMLMarshalling
     (to-xml [this]
-      (if (seq attributes)
+      (if (seq attribute)
         (dsl/attributes
         {}
-        (map to-xml attributes))))
+        (map to-xml attribute))))
     (from-xml [_ xml]
-      (when xml
-        (Attributes. (map (partial from-xml (Attribute. nil nil)) (zx/xml-> xml :attribute))))))
+      (if (seq xml)
+        (Attributes. (map (partial from-xml (map->Attribute {})) (zx/xml-> xml :attribute))))))
 
 (defrecord Classpathentry
-  [^:attribute kind ^:attribute path attributes]
+  [^:attribute kind ^:attribute path ^:optional attributes]
   XMLMarshalling
   (to-xml [this]
     (dsl/classpathentry 
       {:kind (:kind this) :path (:path this)}
       (when attributes (to-xml attributes))))
-  (from-xml [this xml]
-    (when xml 
+  (from-xml [_ xml]
+    (when xml
       (Classpathentry. (zx/attr xml :kind)
              (zx/attr xml :path)
-             (from-xml (Attributes. nil) (zx/xml1-> xml :attributes))))))
+             (from-xml (map->Attributes {}) (zx/xml1-> xml :attributes))))))
     
 (defrecord Classpath
-  [classpathentries]
+  [^:zero-to-many classpathentry]
     XMLMarshalling
     (to-xml [this]
       (dsl/classpath
         {}
-        (if (seq classpathentries)
-          (map to-xml classpathentries))))
+        (if (seq classpathentry)
+          (map to-xml classpathentry))))
     (from-xml [_ xml]
-      (when xml 
-        (Classpath. (map (partial from-xml (Classpathentry. nil nil nil)) (zx/xml-> xml :classpathentry))))))
+      (if (seq xml) 
+        (Classpath. (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
 
