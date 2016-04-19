@@ -4,8 +4,7 @@
  :type :framework
  :version "0.5.2"
  :description "Generator framework for model driven software development"
- :plugins ["global"
-           ["org.soulspace.baumeister/ClojurePlugin"]
+ :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
  :dependencies [["org.clojure/clojure, 1.7.0"]

@@ -4,8 +4,7 @@
  :type :library
  :version "0.1.1"
  :description "The CljSonarLibrary provides access to the Sonar web service API."
- :plugins ["global"
-           ["org.soulspace.baumeister/ClojurePlugin"]
+ :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
  :dependencies [["org.clojure/clojure, 1.7.0"]

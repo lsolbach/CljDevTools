@@ -4,8 +4,7 @@
  :type :library
  :version "0.5.2"
  :description "The CljMavenLibrary contains abstractions and functions for maven POMs and metadata."
- :plugins ["global"
-           ["org.soulspace.baumeister/ClojurePlugin"]
+ :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]
            ["org.soulspace.baumeister/DistributionPlugin"]]
  :dependencies [["org.clojure/clojure, 1.7.0"]
