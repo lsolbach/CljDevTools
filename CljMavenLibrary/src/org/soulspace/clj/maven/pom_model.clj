@@ -17,6 +17,12 @@
         [org.soulspace.clj.application string-property])
   (:import [org.soulspace.clj.xml.marshalling.XMLMarshalling]))
 
+
+(declare parse-pom-exclusion)
+
+; TODO update in parse-pom-properties
+(def prop-map (atom {}))
+
 ; FIXME hack
 (defn pom-name [dependency]
   (if (nil? (:classifier dependency))
@@ -104,7 +110,7 @@
           exclusions (map (partial parse-pom-exclusion prop-map) (zx/xml-> xml :exclusions :exclusion))
           optional (zx/xml1-> xml :optional zx/text)
           ]
-      (Dependency. group-id artifact-id version type classifier scope system-path exclusions optional))
+      (Dependency. group-id artifact-id version type classifier scope system-path exclusions optional)))
   (to-xml [this]
     (pom/dependency {}
                     (pom/group-id {} (:group-id this))
