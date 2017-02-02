@@ -7,7 +7,7 @@
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
- :dependencies [["org.clojure/clojure, 1.7.0"]
+ :dependencies [["org.clojure/clojure, 1.8.0"]
                 ["org.soulspace.clj/CljVersionLibrary, 0.4.4"]
                 ["org.soulspace.clj/CljLibrary, 0.6.1"]]
  ]
