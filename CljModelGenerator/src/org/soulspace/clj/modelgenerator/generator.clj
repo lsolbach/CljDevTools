@@ -15,30 +15,36 @@
     [org.soulspace.clj.java beans]
     [org.soulspace.clj.modelgenerator design-model template context protected-areas]))
 
-; TODO load specified model as library to support different models with the generator (then we have a real generator framework)
+; TODO load the specified model as library to support different models with the generator (then we have a real generator framework)
 ; TODO define a protocol for the model repositories
 
-; TODO load template engine as library to support different template engines
+; TODO load the template engine as library to support different template engines
 ; TODO define a protocol for template engines
 
 ; Generator
-(defn get-path [dest gen element]
+(defn get-path
+  "Returns the path for the generated element."
+  [dest gen element]
   (str dest "/" (namespace-path gen element) (name-path gen element)))
 
-(defn create-namespace-path [pathname]
+(defn create-namespace-path
+  "Creates the path by creating all neccessary directories."
+  [pathname]
   (let [file (as-file pathname)]
     (if (not (exists? file))
       (.mkdirs file))))
 
-(defn suppress-write? [gen result]
+(defn suppress-write?
+  ""
+  [gen result]
   ;TODO implement
   ; :suppressWritePattern regex
   ; :suppressWrite EMPTY, WHITESPACE
   )
 
-(defn write-generated-artifact [pathname result]
-  ;(println "writing file " pathname)
-  ;(println "content " result)
+(defn write-generated-artifact
+  "Write the generated artifact to file."
+  [pathname result]
   (let [file (as-file pathname)
         parent (parent-dir file)]
     ; TODO check suppress-write
@@ -48,8 +54,9 @@
     ; (with-open ((writer pathname)))
     (spit pathname result)))
 
-(defn build-context [ctx-map]
+(defn build-context
   "Build a context map which is accessible from within the templates."
+  [ctx-map]
   (loop [ctx {"Timestamp" (str (java.util.Date.))} src (keys ctx-map)]
     (if-not (seq src)
       ctx
@@ -72,7 +79,9 @@
         (.add ds "PROTECTED_AREAS" protected-areas))
       (.generate engine ds))))
 
-(defn generate-for-generator [ctx gen model model-ds]
+(defn generate-for-generator
+  "Generate for a given generator of the generation context."
+  [ctx gen model model-ds]
   (let [engine (get-template-engine ctx gen)]
     (doseq [element (element-seq gen model)]
       (when (must-generate? gen element)
@@ -83,11 +92,12 @@
             (write-generated-artifact path result)))))))
 
 (defn generate-all
+  "Generate for all configured generators in the generation context."
   ([ctx]
-    "Load the model specified by the context and call all generators in the generation context."
+    ; Load the model specified by the context and call all generators in the generation context.
     (generate-all ctx (:generators ctx)))
   ([ctx generators]
-    "Load the model specified by the context and call all given generators."
+    ; Load the model specified by the context and call all given generators.
     (let [model (initialize-model ctx)
           model-ds (create-datasource model)]
       (doseq [gen generators]

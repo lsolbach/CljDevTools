@@ -20,16 +20,21 @@
            [org.soulspace.modelling.uml14.impl Uml14RepositoryImpl Xmi12ReaderImpl]
            [org.soulspace.modelling.repository.builder.uml14.impl Uml14ModelBuilderImpl]))
 
-(defn print-element [element]
+(defn print-element
+  [element]
   (println (.getElementType element) (.getId element) (.getName element) (.getParentElement element)))
 
 ; model specific functions
-(defn element-namespace [gen element]
+(defn element-namespace
+  "Returns the namespace of the element."
+  [gen element]
   (if (:useNameAsNamespace gen)
     (.getQualifiedName element)
     (.getNamespace element)))
 
-(defn element-base-name [name-str element]
+(defn element-base-name
+  "Returns the base name of the element."
+  [name-str element]
   (if (starts-with "[" name-str)
     (cond
       (or (= name-str "[EMPTY]") (= name-str "[]"))
@@ -67,13 +72,15 @@
             (recur (.getParentElement candidate))))))
     name-str))
 
-(defn namespace-path [gen element]
+(defn namespace-path
+  "Returns the path based on the namespace of the element."
+  [gen element]
   ; must be consistent with method namespace() in model/lib.tinc
   (str 
     (when (:subdir gen)
       (str (:subdir gen) "/"))
     (when (:namespacePrefix gen)
-      (str (ns-to-path (:namespacePrefix gen)) "/"))
+      (str (ns-to-path (element-base-name (:namespacePrefix gen) element)) "/"))
     (if (:baseNamespace gen)
       (if (:useNameAsNamespace gen)
         (str (ns-to-path (element-base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
@@ -81,9 +88,10 @@
       (if-not (nil? (element-namespace gen element))
         (str (ns-to-path (element-namespace gen element)) "/")))
     (when (:namespaceSuffix gen)
-      (str (ns-to-path (:namespaceSuffix gen)) "/"))))
+      (str (ns-to-path (element-base-name (:namespaceSuffix gen) element)) "/"))))
   
 (defn name-path [gen element]
+  "Returns the path based on the name of the element."
   (str
     (:prefix gen)
     (if (:baseName gen)
@@ -93,12 +101,14 @@
     (when (:extension gen)
       (str "." (:extension gen)))))
 
-(defn model-element? [e]
-  (let [result (not (.getIsProfileElement e))]
-;    (println "model-element?" result)
-    result))
+(defn model-element?
+  "Checks if the element is part of the current model and not an element of an included profile."
+  [element]
+  (not (.getIsProfileElement element)))
 
-(defn stereotype-set [stereotypes]
+(defn stereotype-set
+  "Returns the set of stereotypes."
+  [stereotypes]
   (cond
     (set? stereotypes)
     stereotypes
@@ -107,7 +117,9 @@
     :default
     (set stereotypes)))
 
-(defn generate-for-stereotype? [gen element]
+(defn generate-for-stereotype?
+  "Checks if generation is needed by comparing the stereotypes of the element with the stereotypes of the generator context."
+  [gen element]
   (if-not (seq (:stereotypes gen))
     true ; no stereotype constraint
     (let [s-el (into #{} (map #(.getName %) (.getStereotypeSet element)))
@@ -126,10 +138,14 @@
       ;(println "generate for stereotypes gen" s-gen "element" s-el "result" result)
       result)))
 
-(defn equal-values? [m1 m2 k]
+(defn equal-values?
+  ""
+  [m1 m2 k]
   (= (m1 k) (m2 k)))
 
-(defn generate-for-tagged-value? [gen element]
+(defn generate-for-tagged-value?
+  "Checks if generation is needed for the element according to the tagged value configuration."
+  [gen element]
   (if (seq (:taggedValues gen))
     (let [t-el (into {} (.getTaggedValueMap element))
           t-gen (:taggedValues gen)
@@ -137,7 +153,9 @@
       (every? true? (map (partial equal-values? t-el t-gen) key-list)))
     true))
   
-(defn generate-for-namespace? [gen element]
+(defn generate-for-namespace?
+  "Checks if generation is needed for the element according to the namespace configuration."
+  [gen element]
   (let [element-ns (element-namespace gen element)
         ; TODO enhance for seqs in :namespaceIncludes and :namespaceExcludes
         result (cond
@@ -153,7 +171,9 @@
     ; (println "generate for namespace" result)
     result))
 
-(defn must-generate? [gen element]
+(defn must-generate?
+  "Checks if generation is needed for the element according to the generator context."
+  [gen element]
   ; (println "checking generation for" (.getName element))
   (let [result (and
                  (model-element? element)
@@ -163,7 +183,9 @@
     ; (println "must generate for element" element "?" result)
     result))
         
-(defn element-seq [gen model]
+(defn element-seq
+  "Returns the sequence of elements of the type requested by the generator context."
+  [gen model]
   ; (println "getting elements of type" (:element gen) "for generator" gen)
   (let [elements (cond
     (= "ActionSequence" (:element gen)) (seq (.getActionSequenceList model))
@@ -228,38 +250,56 @@
     elements))
 
 ; UML/XMI repository initialization
-(defn create-uml-repository []
+(defn create-uml-repository
+  "Creates an UML 1.4 repository."
+  []
   (Uml14RepositoryImpl.))
 
-(defn create-xmi-reader [uml-repository]
+(defn create-xmi-reader
+  "Creates an XMI 1.2 reader."
+  [uml-repository]
   (Xmi12ReaderImpl. uml-repository))
 
-(defn create-model-repository []
+(defn create-model-repository
+  "Creates a new model repository."
+  []
   (ModelRepositoryImpl.))
 
-(defn create-uml-modelbuilder [uml-repository model-repository]
+(defn create-uml-modelbuilder
+  "Creates a model builder to convert an UML 1.4 repository into a model repository."
+  [uml-repository model-repository]
   (Uml14ModelBuilderImpl. uml-repository model-repository))
 
-(defn load-profile [xmi-reader profile]
+(defn load-profile
+  "Loads the profile from its XMI file."
+  [xmi-reader profile]
   (.loadProfile xmi-reader profile)
   xmi-reader)
 
-(defn load-profiles [xmi-reader profiles]
+(defn load-profiles
+  "Loads the profiles from their XMI files."
+  [xmi-reader profiles]
   (if (seq profiles)
     (.loadProfiles xmi-reader (into-array profiles)))
   xmi-reader)
 
-(defn load-model [xmi-reader xmi]
+(defn load-model
+  "Loads the model from its XMI file."
+  [xmi-reader xmi]
   (.loadModel xmi-reader xmi)
   xmi-reader)
 
-(defn initialize-xmi [ctx]
+(defn initialize-xmi
+  "Intitializes the UML 1.4 repository by loading XMI files of the profiles and the model."
+  [ctx]
   (let [xmi-reader (create-xmi-reader (create-uml-repository))]
     (load-profiles xmi-reader (map as-file (:profiles ctx)))
     (load-model xmi-reader (as-file (str (:model ctx) ".xmi")))
     (.getXmiRepository xmi-reader)))
 
-(defn initialize-model [ctx]
+(defn initialize-model
+  "Initializes the model repository by converting the UML 1.4 repository."
+  [ctx]
   (let [uml-repository (initialize-xmi ctx)
         model-repository (create-model-repository)]
     (let [model-builder (create-uml-modelbuilder uml-repository model-repository)]
