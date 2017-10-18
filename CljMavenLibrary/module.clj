@@ -3,7 +3,9 @@
  :project "org.soulspace.clj"
  :type :library
  :version "0.5.3"
- :description "The CljMavenLibrary contains abstractions and functions for maven POMs and metadata."
+ :description "The CljMavenLibrary contains abstractions and functions for maven POMs and metadata"
+ :license ["Eclipse Public License 1.0" "http://www.eclipse.org/legal/epl-v10.html"]
+ :scm-url "https://github.com/lsolbach/CljDevTools"
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]
            ["org.soulspace.baumeister/DistributionPlugin"]]

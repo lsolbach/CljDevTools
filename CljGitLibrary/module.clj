@@ -3,10 +3,11 @@
  :project "org.soulspace.clj"
  :type :library
  :version "0.1.1"
- :description "The CljGitLibrary provides a clojure api on JGit."
+ :description "The CljGitLibrary provides a clojure api on JGit"
  :project-lead "Ludger Solbach"
  :provider "soulspace.org"
  :license ["Eclipse Public License 1.0" "http://www.eclipse.org/legal/epl-v10.html"]
+ :scm-url "https://github.com/lsolbach/CljDevTools"
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]

@@ -3,7 +3,9 @@
  :project "org.soulspace.clj"
  :type :library
  :version "0.1.2"
- :description "The CljSonarLibrary provides access to the Sonar web service API."
+ :description "The CljSonarLibrary provides access to the Sonar web service API"
+ :license ["Eclipse Public License 1.0" "http://www.eclipse.org/legal/epl-v10.html"]
+ :scm-url "https://github.com/lsolbach/CljDevTools"
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
