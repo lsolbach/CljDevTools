@@ -2,7 +2,7 @@
  :module "CljGitLibrary"
  :project "org.soulspace.clj"
  :type :library
- :version "0.1.1"
+ :version "0.1.2"
  :description "The CljGitLibrary provides a clojure api on JGit"
  :project-lead "Ludger Solbach"
  :provider "soulspace.org"
@@ -13,5 +13,5 @@
            ["org.soulspace.baumeister/PackagePlugin"]]
  :dependencies [["org.clojure/clojure, 1.8.0"]
                 ["org.eclipse.jgit/org.eclipse.jgit, 3.2.0.201312181205-r"]
-                ["org.soulspace.clj/CljJavaLibrary, 0.6.1"]]
+                ["org.soulspace.clj/CljJavaLibrary, 0.7.0"]]
  ]
