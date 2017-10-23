@@ -2,7 +2,7 @@
  :module "CljModelGenerator"
  :project "org.soulspace.clj"
  :type :framework
- :version "0.5.4"
+ :version "0.5.5"
  :description "Generator framework for model driven software development"
  :plugins [["org.soulspace.baumeister/ClojurePlugin, 0.6.5"]
            ["org.soulspace.baumeister/ClojureTestPlugin, 0.6.5"]
