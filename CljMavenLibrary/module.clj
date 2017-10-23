@@ -11,6 +11,6 @@
            ["org.soulspace.baumeister/DistributionPlugin"]]
  :dependencies [["org.clojure/clojure, 1.8.0"]
                 ["org.clojure/data.zip, 0.1.1"]
-                ["org.soulspace.clj/CljXmlLibrary, 0.4.1"]
-                ["org.soulspace.clj/CljApplicationLibrary, 0.5.2"]]
+                ["org.soulspace.clj/CljXmlLibrary, 0.4.3"]
+                ["org.soulspace.clj/CljApplicationLibrary, 0.6.0"]]
  ]
