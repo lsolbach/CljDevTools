@@ -11,7 +11,7 @@
   (:use [clojure.java.io]))
 
 ; TODO dump protected areas as clojure map per generated file in a checked in dir
-; TODO  so that the generated filed has not to be checked in 
+; TODO  so that the generated filed has not to be checked in
 
 (defn begin-pattern [area-marker]
   "Returns the regex pattern for the begin of a protected area based on the area marker."
@@ -24,8 +24,8 @@
 (defn read-lines
   "Reads the file given and returns a non lazy sequence a of its lines."
   ([file]
-    (with-open [rdr (reader file)]
-      (doall (line-seq (reader))))))
+   (with-open [rdr (reader file)]
+     (doall (line-seq (reader))))))
 
 ; TODO line separator is encoding dependent!?!
 (defn parse-protected-areas [area-marker lines]
@@ -41,7 +41,7 @@
             (recur (rest remaining-lines) nil "" (assoc area-map area-id area-content)) ; line ending a protected area
             (recur (rest remaining-lines) area-id (str area-content (first remaining-lines) "\n") area-map))) ; line inside a protected area
         area-map)))) ; no more lines, return area map
-  
+
 (defn read-protected-areas [gen path]
   "Reads the given path and returns the proected areas as a map."
   (if-let [area-marker (:protectedArea gen)]

@@ -9,7 +9,7 @@
 ;
 (ns org.soulspace.clj.git.porcelain
   (:use [clojure.java.io :exclude [delete-file]]
-        [clojure.string :only [lower-case]] 
+        [clojure.string :only [lower-case]]
         [org.soulspace.clj file]
         [org.soulspace.clj.string]
         [org.soulspace.clj.java beans]
@@ -43,9 +43,9 @@
     `(defn ~cmd-fn-name
        ~(str "Creates a " cmd-doc-name " command.")
        ([]
-         (~cmd-fn-name *git*))
+        (~cmd-fn-name *git*))
        ([^Git git#]
-         (~cmd-method-name git#)))))
+        (~cmd-method-name git#)))))
 
 (defmacro defcommands
   "Defines functions for all the given git commands."
@@ -62,39 +62,39 @@
               "Merge" "NameRev" "NoteAdd" "NotesList" "NoteRemove" "NoteShow" "Pull" "Push" "Rebase" "Reflog"
               "Reset" "Revert" "Rm" "StashApply" "StashCreate" "StashDrop" "StashList" "Status"
               "SubmoduleAdd" "SubmoduleInit" "SubmoduleStatus" "SubmoduleSync" "SubmoduleUpdate"
-              "Tag" "TagDelete" "TagList"
-              ])
+              "Tag" "TagDelete" "TagList"])
+
 
 (defn git-command-factory
   "Build a git context for the repository."
   [repository]
-    (Git. repository))
+  (Git. repository))
 
 (defn close
   "Closes the git context."
   [git]
-    (.close git))
+  (.close git))
 
 (defn wrap
   ""
   [git repo]
-    (.wrap git repo))
+  (.wrap git repo))
 
 (defn open
   ""
   ([file]
-    (Git/open file))
+   (Git/open file))
   ([file fs]
-    (Git/open file fs)))
+   (Git/open file fs)))
 
 (defn configure-command
   "Configures a git command with properties given as props and the items if given."
   ([cmd props]
-    (set-properties! cmd props)
-    cmd)
+   (set-properties! cmd props)
+   cmd)
   ([cmd props items]
-    (add-properties! (configure-command cmd props) items)
-    cmd))
+   (add-properties! (configure-command cmd props) items)
+   cmd))
 
 (defn call-command
   ""
@@ -104,68 +104,68 @@
 (defn call
   ""
   ([f]
-    (.call (f)))
+   (.call (f)))
   ([f props]
-    (.call (configure-command (f) props)))
+   (.call (configure-command (f) props)))
   ([f props items]
-    (.call (configure-command (f) props items))))
+   (.call (configure-command (f) props items))))
 
 (defn git-add
   "Add items to the repository."
   ([props]
-    (call (add-command) props))
+   (call (add-command) props))
   ([props items]
-    (call (add-command) props items)))
+   (call (add-command) props items)))
 
 (defn git-apply
   "Apply"
   ([props]
-    (call (apply-command) props))
+   (call (apply-command) props))
   ([props items]
-    (call (apply-command) props items)))
+   (call (apply-command) props items)))
 
 (defn git-archive
   "Archive."
   ([props]
-    (call (archive-command) props))
+   (call (archive-command) props))
   ([props items]
-    (call (archive-command) props items)))
+   (call (archive-command) props items)))
 
 (defn git-blame
   "Blame."
   ([props]
-    (call (blame-command) props))
+   (call (blame-command) props))
   ([props items]
-    (call (blame-command) props items)))
+   (call (blame-command) props items)))
 
 (defn git-branch-create
   "Create a branch."
   ([props]
-    (call (branch-create-command) props))
+   (call (branch-create-command) props))
   ([props items]
-    (call (branch-create-command) props items)))
+   (call (branch-create-command) props items)))
 
 (defn clone-command
   "Creates a clone command."
   ([]
-    (Git/cloneRepository))
+   (Git/cloneRepository))
   ([^Git git]
-    (clone-command)))
+   (clone-command)))
 
 (defn init-command
   "Creates an init command."
   ([]
-    (Git/init))
+   (Git/init))
   ([^Git git]
-    (init-command)))
+   (init-command)))
 
-; TODO check: static call or *git* binding? 
+; TODO check: static call or *git* binding?
 (defn ls-remote-command
   "Creates a ls remote command."
   ([]
-    (Git/lsRemoteRepository))
+   (Git/lsRemoteRepository))
   ([^Git git]
-    (.lsRemote git)))
+   (.lsRemote git)))
 
 ; ls-remote-repository
 
@@ -174,5 +174,5 @@
   "Creates a git context for the repository denoted by file, executes the body and closes the git context."
   [file & body]
   `(binding [*git* (open (as-file ~file))]
-   ~@body
-   (close *git*)))
+    ~@body
+    (close *git*)))

@@ -19,5 +19,4 @@
 (defn sources-query-url
   "Returns the url for a resource query."
   ([param-map]
-    (str sources-api "?" (query-parameters param-map))))
-
+   (str sources-api "?" (query-parameters param-map))))

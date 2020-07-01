@@ -14,39 +14,37 @@
 (defrecord Plugin
   [extension-point extension]
   XMLMarshalling
-  (to-xml [this]
-    )
-  XMLUnmarshalling
-  (from-xml [this xml]
-    )
-  )
+  (to-xml [this])
 
-(defrecord Fragment 
+  XMLUnmarshalling
+  (from-xml [this xml]))
+
+
+
+(defrecord Fragment
   [extension-point-list extension-list]
   XMLMarshalling
-  (to-xml [this]
-    )
+  (to-xml [this])
+
   XMLUnmarshalling
-  (from-xml [this xml]
-    )
-  )
+  (from-xml [this xml]))
+
+
 
 (defrecord ExtensionPoint
   [^:attribute name ^:attribute id ^:attribute schema]
   XMLMarshalling
-    (to-xml [this]
-    )
+  (to-xml [this])
+
   XMLUnmarshalling
-  (from-xml [this xml]
-    )
-  )
+  (from-xml [this xml]))
+
+
 
 (defrecord Extension
   [^:attribute point ^:attribute id ^:attribute name]
   XMLMarshalling
-    (to-xml [this]
-    )
+  (to-xml [this])
+
   XMLUnmarshalling
-  (from-xml [this xml]
-    )
-  )
+  (from-xml [this xml]))

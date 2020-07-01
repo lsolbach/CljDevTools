@@ -25,7 +25,7 @@
 (defn issue-query-url
   "Returns the url for an issue search query."
   ([param-map]
-    (str issue-search-api "?" (query-parameters param-map))))
+   (str issue-search-api "?" (query-parameters param-map))))
 
 (defn component-to-file
   [component ext]
@@ -61,4 +61,3 @@
       issues
       (recur (+ page 1)
              (append-issues-page issues (get-issues-page param-map (+ page 1)))))))
-

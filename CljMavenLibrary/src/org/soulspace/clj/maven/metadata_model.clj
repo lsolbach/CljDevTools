@@ -35,7 +35,7 @@
 (defrecord MetadataImpl
   [group-id artifact-id version versioning plugins]
   Metadata
-  (metadata-xml [this] 
+  (metadata-xml [this]
     (md/metadata {}
                  (md/group-id {} group-id)
                  (md/artifact-id {} artifact-id)
@@ -94,10 +94,10 @@
   [zipper]
   (when (seq zipper)
     (let [classifier(zx/xml1-> zipper :classifier zx/text)
-        extension(zx/xml1-> zipper :extension zx/text)
-        value(zx/xml1-> zipper :value zx/text)
-        updated(zx/xml1-> zipper :updated zx/text)]
-    (MetadataSnapshotVersionImpl. classifier extension value updated))))
+          extension(zx/xml1-> zipper :extension zx/text)
+          value(zx/xml1-> zipper :value zx/text)
+          updated(zx/xml1-> zipper :updated zx/text)]
+     (MetadataSnapshotVersionImpl. classifier extension value updated))))
 
 (defn parse-snapshot
   [zipper]

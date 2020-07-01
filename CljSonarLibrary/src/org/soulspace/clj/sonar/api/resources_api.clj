@@ -23,11 +23,11 @@
 (defn resource-query-url
   "Returns the url for a resource query."
   ([param-map]
-    (str resources-api "?" (query-parameters param-map))))
+   (str resources-api "?" (query-parameters param-map))))
 
 (defn get-resources
   "Returns a map of the resources matching the parameters."
   ([param-map]
-    (parse-resources (xml-zipper (resource-query-url (merge param-map {:format :xml})))))
+   (parse-resources (xml-zipper (resource-query-url (merge param-map {:format :xml})))))
   ([release tier metrics]
-    (parse-resources (xml-zipper (resource-query-url release tier metrics)))))
+   (parse-resources (xml-zipper (resource-query-url release tier metrics)))))

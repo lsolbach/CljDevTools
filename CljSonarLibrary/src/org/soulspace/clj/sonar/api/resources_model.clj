@@ -11,8 +11,8 @@
   (:require [clojure.zip :as zip]
             [clojure.data.xml :as xml]
             [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx])
-  )
+            [clojure.data.zip.xml :as zx]))
+
 
 (defn parse-msr
   "Returns a map with the metrics data of a resource."
@@ -40,4 +40,3 @@
   "Returns a map with the data of a resources response."
   [zipper]
   (map parse-resource (zx/xml-> zipper :resource)))
-

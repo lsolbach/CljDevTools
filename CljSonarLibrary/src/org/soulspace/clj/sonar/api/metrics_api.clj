@@ -23,14 +23,13 @@
 (defn metrics-query-url
   "Returns the url for a metrics query."
   ([param-map]
-    (str metrics-api "?" (query-parameters param-map)))
+   (str metrics-api "?" (query-parameters param-map)))
   ([param-map metric]
-    (str metrics-api "/" metric "?" (query-parameters param-map))))
+   (str metrics-api "/" metric "?" (query-parameters param-map))))
 
 (defn get-metrics
   "Returns a sequence of the metrics matching the parameters."
   ([param-map]
-    (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml})))))
+   (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml})))))
   ([param-map metric]
-    (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml}) metric)))))
-
+   (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml}) metric)))))

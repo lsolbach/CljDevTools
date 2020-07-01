@@ -23,48 +23,46 @@
         {}
       (to-xml name)
       (to-xml comment)
-        (dsl/projects
-        (if (seq projects)
-            (map to-xml projects)))
+      (dsl/projects
+       (if (seq projects)
+           (map to-xml projects)))
       (dsl/build-spec
         (if (seq build-spec)
           (map to-xml build-spec)))
       (dsl/natures
           (if (seq natures)
-            (map to-xml projects)))))
-  )
+            (map to-xml projects))))))
+
 
 (defrecord Name
   [content]
   XMLMarshalling
   (to-xml [this]
-    (dsl/name {} content))
-  )
+    (dsl/name {} content)))
+
 
 (defrecord Project
   []
   XMLMarshalling
-  (to-xml [this]
-    )
-  )
+  (to-xml [this]))
+
+
 
 (defrecord BuildCommand
   [name arguments]
   XMLMarshalling
-  (to-xml [this]
-    )
-  )
+  (to-xml [this]))
+
+
 
 (defrecord Nature
   [content]
   XMLMarshalling
   (to-xml [this]
-    (dsl/nature {} content))
-  )
+    (dsl/nature {} content)))
+
 
 ;
 ; unmarshal XML with multi function, which dispatches on the tag keyword
 ;
 (defmulti unmarshal-xml current-zipper-tag)
-
-

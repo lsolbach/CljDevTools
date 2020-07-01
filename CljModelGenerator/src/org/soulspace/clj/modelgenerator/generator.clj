@@ -36,11 +36,11 @@
 
 (defn suppress-write?
   ""
-  [gen result]
+  [gen result])
   ;TODO implement
   ; :suppressWritePattern regex
   ; :suppressWrite EMPTY, WHITESPACE
-  )
+
 
 (defn write-generated-artifact
   "Write the generated artifact to file."
@@ -69,15 +69,15 @@
 (defn generate-for-element
   "Call the TemplateEngine's generate method for the given element and generator context."
   ([engine gen element]
-    (let [ds (create-datasource element)]
-      (.add ds "GENERATOR_CONTEXT" (build-context gen))
-      (.generate engine ds)))
+   (let [ds (create-datasource element)]
+     (.add ds "GENERATOR_CONTEXT" (build-context gen))
+     (.generate engine ds)))
   ([engine gen element protected-areas datasource]
-    (let [ds (create-datasource element datasource)]
-      (.add ds "GENERATOR_CONTEXT" (build-context gen))
-      (when (seq protected-areas)
-        (.add ds "PROTECTED_AREAS" protected-areas))
-      (.generate engine ds))))
+   (let [ds (create-datasource element datasource)]
+     (.add ds "GENERATOR_CONTEXT" (build-context gen))
+     (when (seq protected-areas)
+       (.add ds "PROTECTED_AREAS" protected-areas))
+     (.generate engine ds))))
 
 (defn generate-for-generator
   "Generate for a given generator of the generation context."
@@ -95,11 +95,11 @@
   "Generate for all configured generators in the generation context."
   ([ctx]
     ; Load the model specified by the context and call all generators in the generation context.
-    (generate-all ctx (:generators ctx)))
+   (generate-all ctx (:generators ctx)))
   ([ctx generators]
     ; Load the model specified by the context and call all given generators.
-    (let [model (initialize-model ctx)
-          model-ds (create-datasource model)]
-      (doseq [gen generators]
-        ;(println "calling generator" gen)
-        (generate-for-generator ctx gen model model-ds)))))
+   (let [model (initialize-model ctx)
+         model-ds (create-datasource model)]
+     (doseq [gen generators]
+       ;(println "calling generator" gen)
+       (generate-for-generator ctx gen model model-ds)))))

@@ -24,13 +24,13 @@
 (defn dump-datasource [ds]
   (org.soulspace.template.util.DataSourceUtil/dump ds))
 
-(defn create-datasource 
+(defn create-datasource
   ([]
-    (BeanDataSourceImpl.))
+   (BeanDataSourceImpl.))
   ([data]
-    (BeanDataSourceImpl. data))
+   (BeanDataSourceImpl. data))
   ([data datasource]
-    (BeanDataSourceImpl. data datasource)))
+   (BeanDataSourceImpl. data datasource)))
 
 (defn create-template-engine []
   (TemplateEngineImpl.))

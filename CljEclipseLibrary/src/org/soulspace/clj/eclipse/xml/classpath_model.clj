@@ -44,7 +44,7 @@
   [^:attribute kind ^:attribute path ^:optional attributes]
   XMLMarshalling
   (to-xml [this]
-    (dsl/classpathentry 
+    (dsl/classpathentry
       {:kind (:kind this) :path (:path this)}
       (when attributes (to-xml attributes))))
   XMLUnmarshalling
@@ -53,7 +53,7 @@
       (->Classpathentry (zx/attr xml :kind)
                        (zx/attr xml :path)
                        (from-xml (map->Attributes {}) (zx/xml1-> xml :attributes))))))
-    
+
 (defrecord Classpath
   [^:zero-to-many classpathentry]
   XMLMarshalling
@@ -64,7 +64,7 @@
         (map to-xml classpathentry))))
   XMLUnmarshalling
   (from-xml [_ xml]
-    (if (seq xml) 
+    (if (seq xml)
       (->Classpath (map (partial from-xml (map->Classpathentry {})) (zx/xml-> xml :classpathentry))))))
 
 ;
@@ -96,5 +96,4 @@
                   (zx/attr xml :value))))
 
 (defmethod unmarshal-xml nil
-  [xml]
-  )
+  [xml])

@@ -11,6 +11,4 @@
   (:require [clojure.zip :as zip]
             [clojure.data.xml :as xml]
             [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx])
-  )
-
+            [clojure.data.zip.xml :as zx]))

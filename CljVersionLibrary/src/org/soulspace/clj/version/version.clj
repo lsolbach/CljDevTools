@@ -28,9 +28,9 @@
 (defn split-version-string
   "Splits a version string into revision components."
   ([version]
-    (split version #"[.]"))
+   (split version #"[.]"))
   ([version re]
-    (split version re))) 
+   (split version re)))
 
 ; TODO still needed?
 (defn version-match?
@@ -70,7 +70,7 @@
         (compare v1 v2)
         (loop [c1 (split-version-string v1)
                c2 (split-version-string v2)]
-          ; split the versions and compare them part for part 
+          ; split the versions and compare them part for part
           (if (and (seq c1) (seq c1))
             (if (not= (first c1) (first c2))
               (compare-revision (first c1) (first c2))
@@ -106,11 +106,11 @@
 (defn create-version-range
   "Creates a new version range."
   ([]
-    (VersionRangeImpl. nil nil))
+   (VersionRangeImpl. nil nil))
   ([from]
-    (VersionRangeImpl. (new-version from) nil))
+   (VersionRangeImpl. (new-version from) nil))
   ([from to]
-    (VersionRangeImpl. (new-version from) (new-version to))))
+   (VersionRangeImpl. (new-version from) (new-version to))))
 
 (defmulti new-version-range1 type)
 (defmethod new-version-range1 String [arg] (create-version-range arg))
@@ -123,8 +123,8 @@
 (defn new-version-range
   "Builds a new version range."
   ([]
-    (create-version-range))
+   (create-version-range))
   ([arg]
-    (new-version-range1 arg))
+   (new-version-range1 arg))
   ([from to]
-    (create-version-range from to)))
+   (create-version-range from to)))

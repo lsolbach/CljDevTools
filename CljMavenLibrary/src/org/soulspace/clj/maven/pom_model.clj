@@ -31,15 +31,15 @@
 
 (defn pom-exclusion-data [exclusion]
   "Creates exclusion data from a pom exclusion."
-  [(:group-id exclusion) (:artifact-id exclusion)]
-  )
+  [(:group-id exclusion) (:artifact-id exclusion)])
+
 
 ; TODO return all fields
 (defn pom-dependency-data [dependency]
   "Creates dependency data from a pom dependency."
   [[(:group-id dependency) (:artifact-id dependency) (:version dependency)
     (pom-name dependency) (:type dependency)]
-   (:scope dependency) (:optional dependency) 
+   (:scope dependency) (:optional dependency)
    (map pom-exclusion-data (:exclusions dependency))])
 
 (defn parse-pom-properties [zipped]
@@ -57,7 +57,7 @@
 (defrecord Prerequisites
   [maven]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/prerequisites {}
                        (when (:maven this) (pom/maven (:maven this))))))
@@ -65,7 +65,7 @@
 (defrecord IssueManagement
   [system url]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/issue-management {}
                   (when (:system this) (pom/system {} (:system this)))
@@ -74,7 +74,7 @@
 (defrecord CiManagement
   [system url notifiers]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/ci-management {}
                   (when (:system this) (pom/system {} (:system this)))
@@ -89,7 +89,7 @@
           artifact-id (zx/xml1-> xml :artifactId zx/text)
           version (zx/xml1-> xml :version zx/text)]
       (Parent. group-id artifact-id version)))
-  (to-xml [this] 
+  (to-xml [this]
     (pom/parent {}
                 (pom/group-id {} (:group-id this))
                 (pom/artifact-id {} (:artifact-id this))
@@ -98,7 +98,7 @@
 (defrecord Dependency
   [group-id artifact-id version type classifier scope system-path exclusions optional]
   XMLMarshalling
-  (from-xml [this xml] 
+  (from-xml [this xml]
     (let [group-id (zx/xml1-> xml :groupId zx/text)
           artifact-id (zx/xml1-> xml :artifactId zx/text)
           version (zx/xml1-> xml :version zx/text)
@@ -108,8 +108,8 @@
           system-path (zx/xml1-> xml :systemPath zx/text)
           ; FIXME create exclusions with from-xml
           exclusions (map (partial parse-pom-exclusion prop-map) (zx/xml-> xml :exclusions :exclusion))
-          optional (zx/xml1-> xml :optional zx/text)
-          ]
+          optional (zx/xml1-> xml :optional zx/text)]
+
       (Dependency. group-id artifact-id version type classifier scope system-path exclusions optional)))
   (to-xml [this]
     (pom/dependency {}
@@ -127,8 +127,8 @@
 (defrecord Exclusion
   [group-id artifact-id]
   XMLMarshalling
-  (from-xml [this xml] )
-  (to-xml [this] 
+  (from-xml [this xml])
+  (to-xml [this]
     (pom/exclusion {}
                  (when (:group-id this) (pom/group-id {} (:group-id this)))
                  (when (:artifact-id this) (pom/artifact-id {} (:artifact-id this))))))
@@ -136,7 +136,7 @@
 (defrecord Contributor
   [name email url organization organization-url roles timezone properties]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/contributor {}
                      (when (:name this) (pom/name {} (:name this)))
@@ -148,12 +148,12 @@
                        (pom/roles {} (map to-xml (:roles this))))
                      (when (:timezone this) (pom/timezone {} (:timezone this)))
                      (when (seq (:properties this))
-                       (pom/properties {} ))))) ; TODO
-  
+                       (pom/properties {}))))) ; TODO
+
 (defrecord Developer
   [id name email url organization organization-url roles timezone properties]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/developer {}
                    (when (:id this) (pom/id {} (:id this)))
@@ -166,12 +166,12 @@
                      (pom/roles {} (map to-xml (:roles this))))
                    (when (:timezone this) (pom/timezone {} (:timezone this)))
                    (when (seq (:properties this))
-                     (pom/properties {} ))))) ; TODO
+                     (pom/properties {}))))) ; TODO
 
 (defrecord Role
   [role]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/role {} (:role this))))
 
@@ -179,7 +179,7 @@
   [id activation build modules repositories plugin-repositories dependencies
    reports reporting dependency-management distribution-management properties]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/profile {}
                  (when (:id this) (pom/id {} (:id this)))
@@ -199,12 +199,12 @@
                  (when (:dependency-management this) (to-xml (:dependency-management this)))
                  (when (:distribution-management this) (to-xml (:distribution-management this)))
                  (when (seq (:properties this))
-                   (pom/properties {} ))))) ; TODO
+                   (pom/properties {}))))) ; TODO
 
 (defrecord Activation
   [active-by-default jdk os property file]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/activation {}
                     (when (:active-by-default this) (pom/active-by-default {} (:active-by-default this)))
@@ -212,11 +212,11 @@
                     (when (:os this) (to-xml (:os this)))
                     (when (:property this) (to-xml (:property this)))
                     (when (:file this) (to-xml (:file this))))))
-  
+
 (defrecord ActivationFile
   [missing exists]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/activationfile {}
                         (when (:missing this) (pom/missing {} (:missing this)))
@@ -225,7 +225,7 @@
 (defrecord ActivationProperty
   [name value]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/activationproperty {}
                             (when (:name this) (pom/name {} (:name this)))
@@ -234,7 +234,7 @@
 (defrecord ActivationOS
   [name family arch version]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/activationos {}
                       (when (:name this) (pom/name {} (:name this)))
@@ -245,7 +245,7 @@
 (defrecord DependencyManagement
   [dependencies]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/dependency-management {}
                               (when (seq (:dependencies this))
@@ -254,7 +254,7 @@
 (defrecord Reporting
   [exclude-defaults output-directory plugins]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/reporting {}
                    (when (:exclude-defaults this) (pom/exclude-defaults {} (:exclude-defaults this)))
@@ -264,7 +264,7 @@
 (defrecord ReportPlugin
   [group-id artifact-id version inherited configuration report-sets]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/report-plugin {}
                       (when (:group-id this) (pom/group-id {} (:group-id this)))
@@ -277,7 +277,7 @@
 (defrecord ReportSet
   [id configuration inherited reports]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/report-set {}
                    (when (:id this) (pom/id {} (:id this)))
@@ -288,22 +288,22 @@
 (defrecord Report
   [name]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/report {} (:name this))))
 
 (defrecord BuildBase
   [default-goal resources test-resources directory final-name filters plugin-management plugins]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
-    (pom/build-base {}
-                   )))
+    (pom/build-base {})))
+
 
 (defrecord Plugin
   [group-id artifact-id version extensions executions dependencies goals inherited configuration]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/plugin {}
                 (when (:group-id this) (pom/group-id {} (:group-id this)))
@@ -319,51 +319,51 @@
 (defrecord PluginExecution
   [id phase goals inherited configuration]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
-    (pom/plugin-execution {}
-                         )))
+    (pom/plugin-execution {})))
+
 
 (defrecord PluginManagement
   [plugins]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/plugin-management {} (when (seq (:plugins this)) (pom/plugins {} (map to-xml (:plugins this)))))))
 
 (defrecord Goal
   [goal]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/goal {} (:goal this))))
 
 (defrecord Resource
   [target-path filtering directory includes excludes]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
-    (pom/resource {}
-                )))
+    (pom/resource {})))
+
 
 (defrecord Include
   [pattern]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/include {} (:pattern this))))
 
 (defrecord Exclude
   [pattern]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/exclude {} (:pattern this))))
 
 (defrecord DistributionManagement
   [repository snapshot-repository site download-url relocation status]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/distribution-management {}
                                 (when (:repository this) (to-xml (:repository this)))
@@ -376,7 +376,7 @@
 (defrecord Site
   [id name url]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/site {}
               (when (:id this) (pom/id {} (:id this)))
@@ -386,7 +386,7 @@
 (defrecord Relocation
   [group-id artifact-id version message]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/relocation {}
                     (when (:group-id this) (pom/group-id {} (:group-id this)))
@@ -397,7 +397,7 @@
 (defrecord DeploymentRepository
   [unique-version id name url layout]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/deployment-repository {}
                     (when (:unique-version this) (pom/unique-version {} (:unique-version this)))
@@ -409,7 +409,7 @@
 (defrecord Repository
   [releases snapshots id name url layout]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/repository {}
                     (when (:releases this) (to-xml (:releases this)))
@@ -422,7 +422,7 @@
 (defrecord RepositoryPolicy
   [enabled update-policy checksum-policy]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/repository-policy {}
                           (when (:enabled this) (pom/enabled {} (:enabled this)))
@@ -432,7 +432,7 @@
 (defrecord MailingList
   [name subscribe unsubscribe post archive other-archives]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/mailing-list {}
                      (when (:name this) (pom/name {} (:name this)))
@@ -445,7 +445,7 @@
 (defrecord OtherArchive
   [archive]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/other-archive {} (:archive this))))
 
@@ -454,7 +454,7 @@
    output-directory test-output-directory extensions default-goal
    resources test-resources directory final-name filters]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/build {}
                (when (:source-directory this) (pom/source-directory {} (:source-directory this)))
@@ -472,14 +472,14 @@
 (defrecord Filter
   [filter]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/filter {} (:filter this))))
 
 (defrecord TestResource
   [target-path filtering directory includes excludes]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/test-resource {}
                    (when (:target-path this) (pom/target-path {} (:target-path this)))
@@ -491,7 +491,7 @@
 (defrecord Extension
   [group-id artifact-id version]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/extension {}
                    (when (:group-id this) (pom/group-id {} (:group-id this)))
@@ -501,7 +501,7 @@
 (defrecord Notifier
   [type send-on-error send-on-failure send-on-success send-on-warning address configuration]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/notifier {}
                   (when (:type this) (pom/type {} (:type this)))
@@ -515,7 +515,7 @@
 (defrecord License
   [name url distribution comments]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/license {}
                  (when (:name this) (pom/name (:name this)))
@@ -526,7 +526,7 @@
 (defrecord Scm
   [connection developer-connection tag url]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/scm {}
              (when (:connection this) (pom/connection (:connection this)))
@@ -537,33 +537,33 @@
 (defrecord Module
   [module]
   XMLMarshalling
-  (from-xml [this xml] )
-  (to-xml [this] ))
+  (from-xml [this xml])
+  (to-xml [this]))
 
 (defrecord Organization
   [name url]
   XMLMarshalling
-  (from-xml [this xml] )
+  (from-xml [this xml])
   (to-xml [this]
     (pom/organization {}
                       (when (:name this) (pom/name {} (:name this)))
-                      (when (:url this) (pom/url {} (:url this)))
-                      )))
+                      (when (:url this) (pom/url {} (:url this))))))
+
 
 (defrecord Configuration
   [items]
   XMLMarshalling
-  (from-xml [this xml] )
-  (to-xml [this] ))
+  (from-xml [this xml])
+  (to-xml [this]))
 
 (defrecord Project
   [parent model-version group-id artifact-id packaging name version description url prerequisites
    issue-management ci-management inception-year mailing-lists developers contributors licenses
-   scm organization build profiles modules repositories plugin-repositories 
+   scm organization build profiles modules repositories plugin-repositories
    dependencies reports reporting dependency-management distribution-management properties
    parent-pom]
   XMLMarshalling
-  (from-xml [this zipper] 
+  (from-xml [this zipper]
     (let [parent (from-xml (map->Parent {}) (zx/xml1-> zipper :parent))
           model-version (zx/xml1-> zipper :modelVersion zx/text)
           group-id (zx/xml1-> zipper :groupId zx/text)
@@ -594,11 +594,11 @@
           dependency-management (from-xml (map->DependencyManagement {}) (zx/xml1-> zipper :dependencyManagement))
           distribution-management (from-xml (map->DistributionManagement {}) (zx/xml1-> zipper :distributionManagement))
           properties (parse-pom-properties (zx/xml1-> zipper :properties))]
-          (Project. parent model-version group-id artifact-id packaging name version description url prerequisites
-                issue-management ci-management inception-year mailing-lists developers contributors licenses
-                scm organization build profiles modules repositories plugin-repositories 
-                dependencies reports reporting dependency-management distribution-management properties
-                nil)))
+         (Project. parent model-version group-id artifact-id packaging name version description url prerequisites
+               issue-management ci-management inception-year mailing-lists developers contributors licenses
+               scm organization build profiles modules repositories plugin-repositories
+               dependencies reports reporting dependency-management distribution-management properties
+               nil)))
   (to-xml [this]
     (pom/project {}
                  (when (:model-version this) (pom/model-version {} (:model-version this)))
@@ -615,39 +615,39 @@
                  (when (seq (:dependencyManagement this))
                    (pom/dependency-management {} (map to-xml (:dependencies this))))
                  (when (seq (:properties this))
-                   (pom/properties {} )) ; TODO
-                 )))
+                   (pom/properties {}))))) ; TODO
+
 
 ;
 ;
 ;
-(defn new-pom 
+(defn new-pom
   ([model-version group-id artifact-id version packaging parent name description url inception-year
     dependencies dependency-management properties parent-pom]
-    (Project. parent model-version group-id artifact-id packaging name version description url []
-              nil nil inception-year nil nil nil nil nil nil nil nil nil nil nil
-              dependencies nil nil dependency-management nil properties
-              parent-pom))
-  )
+   (Project. parent model-version group-id artifact-id packaging name version description url []
+             nil nil inception-year nil nil nil nil nil nil nil nil nil nil nil
+             dependencies nil nil dependency-management nil properties
+             parent-pom)))
+
 
 (defn new-pom-dependency
   "Create pom dependency."
   ([group-id artifact-id]
-    (new-pom-dependency group-id artifact-id nil "jar" nil "compile" nil nil false))
+   (new-pom-dependency group-id artifact-id nil "jar" nil "compile" nil nil false))
   ([group-id artifact-id version]
-    (new-pom-dependency group-id artifact-id version "jar" nil "compile" nil nil false))
+   (new-pom-dependency group-id artifact-id version "jar" nil "compile" nil nil false))
   ([group-id artifact-id version type classifier scope system-path exclusions optional]
-    (Dependency. group-id artifact-id version
-                        (if (nil? type) "jar" type) classifier
-                        (if (nil? scope) "compile" scope) system-path exclusions
-                        (if (nil? optional) false optional))))
+   (Dependency. group-id artifact-id version
+                       (if (nil? type) "jar" type) classifier
+                       (if (nil? scope) "compile" scope) system-path exclusions
+                       (if (nil? optional) false optional))))
 
 (defn new-pom-exclusion
   "Create pom exclusion."
   ([group-id]
-    (new-pom-exclusion group-id nil))
+   (new-pom-exclusion group-id nil))
   ([group-id artifact-id]
-    (Exclusion. group-id artifact-id)))
+   (Exclusion. group-id artifact-id)))
 
 
 ;
@@ -658,7 +658,7 @@
   (let [e ((juxt
              #(replace-properties prop-map (zx/xml1-> % :groupId zx/text))
              #(replace-properties prop-map (zx/xml1-> % :artifactId zx/text)))
-            exclusion)]
+           exclusion)]
     (apply new-pom-exclusion e)))
 
 (defn parse-pom-dependency [prop-map dep]
@@ -671,58 +671,58 @@
         scope (replace-properties prop-map (zx/xml1-> dep :scope zx/text))
         system-path (replace-properties prop-map (zx/xml1-> dep :systemPath zx/text))
         exclusions (map (partial parse-pom-exclusion prop-map) (zx/xml-> dep :exclusions :exclusion))
-        optional (replace-properties prop-map (zx/xml1-> dep :optional zx/text))
-        ]
+        optional (replace-properties prop-map (zx/xml1-> dep :optional zx/text))]
+
     (new-pom-dependency group-id artifact-id version type classifier scope system-path exclusions optional)))
 
 (defn parse-pom-parent [prop-map zipped]
   "Returns the parent POM artifact data if it exists."
   (if-let [parent (zx/xml1-> zipped :parent)]
     (let [p ((juxt
-             #(replace-properties prop-map (zx/xml1-> % :groupId zx/text))
-             #(replace-properties prop-map (zx/xml1-> % :artifactId zx/text))
-             #(replace-properties prop-map (zx/xml1-> % :version zx/text)))
-            parent)]
+              #(replace-properties prop-map (zx/xml1-> % :groupId zx/text))
+              #(replace-properties prop-map (zx/xml1-> % :artifactId zx/text))
+              #(replace-properties prop-map (zx/xml1-> % :version zx/text)))
+             parent)]
       p)))
 
 (defn parse-pom
   ([zipped]
-    (parse-pom zipped nil))
+   (parse-pom zipped nil))
   ([zipped parent-pom]
-    "Returns the relevant data of the POM."
-    (let [; merge parent properties with properties from pom
-          prop-map (merge (:properties parent-pom) (parse-pom-properties zipped))
-          ; merge properties with common project properties
-          p-map (merge prop-map {:project.groupId (replace-properties prop-map (zx/xml1-> zipped :groupId zx/text)
-                                                                       (:project.groupId prop-map))
-                                 :project.artifactID (replace-properties prop-map (zx/xml1-> zipped :artifactId zx/text)
-                                                                          (:project.artifactID prop-map))
-                                 :project.version (replace-properties prop-map (zx/xml1-> zipped :version zx/text)
-                                                                       (:project.version prop-map))
-                                 :pom.groupId (replace-properties prop-map (zx/xml1-> zipped :groupId zx/text)
-                                                                   (:pom.groupId prop-map))
-                                 :pom.artifactID (replace-properties prop-map (zx/xml1-> zipped :artifactId zx/text)
-                                                                      (:pom.artifactID prop-map))
-                                 :pom.version (replace-properties prop-map (zx/xml1-> zipped :version zx/text)
-                                                                       (:pom.version prop-map))})
-          ; read pom data with property replacement
-          model-version (replace-properties p-map (zx/xml1-> zipped :modelVersion zx/text))
-          group-id (replace-properties p-map (zx/xml1-> zipped :groupId zx/text))
-          artifact-id (replace-properties p-map (zx/xml1-> zipped :artifactId zx/text))
-          version (replace-properties p-map (zx/xml1-> zipped :version zx/text))
-          packaging (replace-properties p-map (zx/xml1-> zipped :packaging zx/text))
-          parent (parse-pom-parent p-map zipped)
-          name (replace-properties p-map (zx/xml1-> zipped :name zx/text))
-          description (replace-properties p-map (zx/xml1-> zipped :description zx/text))
-          url (replace-properties p-map (zx/xml1-> zipped :url zx/text))
-          inception-year (replace-properties p-map (zx/xml1-> zipped :inceptionYear zx/text))
-          dependencies (map (partial parse-pom-dependency p-map) (zx/xml-> zipped :dependencies :dependency))
-          dependencyManagement (map (partial parse-pom-dependency p-map)
-                                    (zx/xml-> zipped :dependencyManagement :dependencies :dependency))
-          ]
-      (new-pom model-version group-id artifact-id version packaging parent name description url inception-year
-               dependencies dependencyManagement p-map parent-pom))))
-  
+   "Returns the relevant data of the POM."
+   (let [; merge parent properties with properties from pom
+         prop-map (merge (:properties parent-pom) (parse-pom-properties zipped))
+         ; merge properties with common project properties
+         p-map (merge prop-map {:project.groupId (replace-properties prop-map (zx/xml1-> zipped :groupId zx/text)
+                                                                      (:project.groupId prop-map))
+                                :project.artifactID (replace-properties prop-map (zx/xml1-> zipped :artifactId zx/text)
+                                                                         (:project.artifactID prop-map))
+                                :project.version (replace-properties prop-map (zx/xml1-> zipped :version zx/text)
+                                                                      (:project.version prop-map))
+                                :pom.groupId (replace-properties prop-map (zx/xml1-> zipped :groupId zx/text)
+                                                                  (:pom.groupId prop-map))
+                                :pom.artifactID (replace-properties prop-map (zx/xml1-> zipped :artifactId zx/text)
+                                                                     (:pom.artifactID prop-map))
+                                :pom.version (replace-properties prop-map (zx/xml1-> zipped :version zx/text)
+                                                                      (:pom.version prop-map))})
+         ; read pom data with property replacement
+         model-version (replace-properties p-map (zx/xml1-> zipped :modelVersion zx/text))
+         group-id (replace-properties p-map (zx/xml1-> zipped :groupId zx/text))
+         artifact-id (replace-properties p-map (zx/xml1-> zipped :artifactId zx/text))
+         version (replace-properties p-map (zx/xml1-> zipped :version zx/text))
+         packaging (replace-properties p-map (zx/xml1-> zipped :packaging zx/text))
+         parent (parse-pom-parent p-map zipped)
+         name (replace-properties p-map (zx/xml1-> zipped :name zx/text))
+         description (replace-properties p-map (zx/xml1-> zipped :description zx/text))
+         url (replace-properties p-map (zx/xml1-> zipped :url zx/text))
+         inception-year (replace-properties p-map (zx/xml1-> zipped :inceptionYear zx/text))
+         dependencies (map (partial parse-pom-dependency p-map) (zx/xml-> zipped :dependencies :dependency))
+         dependencyManagement (map (partial parse-pom-dependency p-map)
+                                   (zx/xml-> zipped :dependencyManagement :dependencies :dependency))]
+
+     (new-pom model-version group-id artifact-id version packaging parent name description url inception-year
+              dependencies dependencyManagement p-map parent-pom))))
+
 ;TODO use prop-map from parent pom
 (defn pom-parent? [zipped]
   (not (nil? (zx/xml1-> zipped :parent))))
