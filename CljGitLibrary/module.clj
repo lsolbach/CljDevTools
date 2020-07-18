@@ -13,5 +13,4 @@
            ["org.soulspace.baumeister/PackagePlugin"]]
  :dependencies [["org.clojure/clojure, 1.8.0"]
                 ["org.eclipse.jgit/org.eclipse.jgit, 3.2.0.201312181205-r"]
-                ["org.soulspace.clj/CljJavaLibrary, 0.7.0"]]
- ]
+                ["org.soulspace.clj/CljJavaLibrary, 0.7.0"]]]

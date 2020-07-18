@@ -11,5 +11,4 @@
                 ["org.soulspace.clj/CljJavaLibrary, 0.6.1"]
                 ["org.soulspace.template/TemplateEngine, 1.0.2"]
                 ["org.soulspace.modelling/UML14ModelBuilder, 0.5.0"]]
- :log-level :debug
- ]
+ :log-level :debug]
