@@ -1,16 +1,18 @@
-;
-;   Copyright (c) Ludger Solbach. All rights reserved.
-;   The use and distribution terms for this software are covered by the
-;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
-;   which can be found in the file license.txt at the root of this distribution.
-;   By using this software in any fashion, you are agreeing to be bound by
-;   the terms of this license.
-;   You must not remove this notice, or any other, from this software.
-;
+;;
+;;   Copyright (c) Ludger Solbach. All rights reserved.
+;;   The use and distribution terms for this software are covered by the
+;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+;;   which can be found in the file license.txt at the root of this distribution.
+;;   By using this software in any fashion, you are agreeing to be bound by
+;;   the terms of this license.
+;;   You must not remove this notice, or any other, from this software.
+;;
+
 (ns org.soulspace.tools.mdd.design-model
-  (:use [clojure.java.io :exclude [delete-file]]
-        [clojure.set :only [intersection]]
-        [org.soulspace.clj string namespace])
+  (:require [clojure.java.io :as io]
+            [clojure.set :refer [intersection]]
+            [org.soulspace.clj.string :as sstr]
+            [org.soulspace.clj.namespace] :as ns)
   (:import [java.io File]
            [org.soulspace.template.impl TemplateEngineImpl]
            [org.soulspace.template.datasource.impl BeanDataSourceImpl]
@@ -35,7 +37,7 @@
 (defn element-base-name
   "Returns the base name of the element."
   [name-str element]
-  (if (starts-with "[" name-str)
+  (if (sstr/starts-with "[" name-str)
     (cond
       (or (= name-str "[EMPTY]") (= name-str "[]"))
       ""
@@ -80,15 +82,15 @@
     (when (:subdir gen)
       (str (:subdir gen) "/"))
     (when (:namespacePrefix gen)
-      (str (ns-to-path (element-base-name (:namespacePrefix gen) element)) "/"))
+      (str (ns/ns-to-path (element-base-name (:namespacePrefix gen) element)) "/"))
     (if (:baseNamespace gen)
       (if (:useNameAsNamespace gen)
-        (str (ns-to-path (element-base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
-        (str (ns-to-path (element-base-name (:baseNamespace gen) element)) "/"))
+        (str (ns/ns-to-path (element-base-name (:baseNamespace gen) element)) "/" (.getName element) "/")
+        (str (ns/ns-to-path (element-base-name (:baseNamespace gen) element)) "/"))
       (if-not (nil? (element-namespace gen element))
-        (str (ns-to-path (element-namespace gen element)) "/")))
+        (str (ns/ns-to-path (element-namespace gen element)) "/")))
     (when (:namespaceSuffix gen)
-      (str (ns-to-path (element-base-name (:namespaceSuffix gen) element)) "/"))))
+      (str (ns/ns-to-path (element-base-name (:namespaceSuffix gen) element)) "/"))))
 
 (defn name-path [gen element]
   "Returns the path based on the name of the element."
@@ -293,8 +295,8 @@
   "Intitializes the UML 1.4 repository by loading XMI files of the profiles and the model."
   [ctx]
   (let [xmi-reader (create-xmi-reader (create-uml-repository))]
-    (load-profiles xmi-reader (map as-file (:profiles ctx)))
-    (load-model xmi-reader (as-file (str (:model ctx) ".xmi")))
+    (load-profiles xmi-reader (map io/as-file (:profiles ctx)))
+    (load-model xmi-reader (io/as-file (str (:model ctx) ".xmi")))
     (.getXmiRepository xmi-reader)))
 
 (defn initialize-model
