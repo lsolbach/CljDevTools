@@ -1,26 +1,15 @@
-CljModelGenerator
-=================
-The CljModelGenerator is ...
-
-Author/Project Lead
--------------------
-Ludger Solbach
+tools.codegen
+=============
+The tools.codegen component is a generator framework for Model Driven Development.
 
 Copyright
 ---------
-© 2011-2013 Ludger Solbach
+© 2011-2020 Ludger Solbach
 
 License
 -------
-[Eclipse Public License 1.0] (http://www.eclipse.org/legal/epl-v10.html "EPL 1.0")
+[Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html)
 
 Code Repository
 ---------------
-[https://github.com/lsolbach/CljJavaLibrary] (https://github.com/lsolbach/CljJavaLibrary)
-
-History
--------
-
-Version 0.4.0 (--.--.201-)
---------------------------
-* Initial import
+[CljDevTools](https://github.com/lsolbach/CljDevTools)
