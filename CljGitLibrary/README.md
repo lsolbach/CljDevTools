@@ -1,20 +1,16 @@
-CljGitLibrary
-=============
-The CljGitLibrary provides a clojure api on JGit.
+tools.git
+=========
+The tools.git component provides a Clojure api for JGit.
 
-
-Author/Project Lead
--------------------
-Ludger Solbach
 
 Copyright
 ---------
-© 2014 Ludger Solbach
+© 2014-2020 Ludger Solbach
 
 License
 -------
-[Eclipse Public License 1.0] (http://www.eclipse.org/legal/epl-v10.html "EPL 1.0")
+[Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html)
 
 Code Repository
 ---------------
-[https://github.com/lsolbach/CljGitLibrary] (https://github.com/lsolbach/CljGitLibrary)
+[CljDevTools on GitHub](https://github.com/lsolbach/CljDevTools)

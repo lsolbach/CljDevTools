@@ -1,14 +1,13 @@
 [
- :module "CljArtifactLibrary"
+ :module "tools.artifact"
  :project "org.soulspace.clj"
  :type :library
- :version "0.4.5"
- :description "The CljArtifactLibrary contains abstractions and functions for the handling of artifacts."
+ :version "0.5.0"
+ :description "The tools.artifact library contains abstractions and functions for the handling of artifacts and versions."
  :license ["Eclipse Public License 1.0" "http://www.eclipse.org/legal/epl-v10.html"]
  :scm-url "https://github.com/lsolbach/CljDevTools"
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
- :dependencies [["org.clojure/clojure, 1.8.0"]
-                ["org.soulspace.clj/CljVersionLibrary, 0.4.5"]
-                ["org.soulspace.clj/CljLibrary, 0.7.0"]]]
+ :dependencies [["org.clojure/clojure, 1.10.1"]
+                ["org.soulspace.clj/clj.base, 0.8.0"]]]

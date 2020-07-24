@@ -1,19 +1,15 @@
-CljEclipseLibrary
-=================
-The CljEclipseLibrary provides clojure abstractions for Eclipse.
-
-Author/Project Lead
--------------------
-Ludger Solbach
+tools.eclipse
+=============
+The tools.eclipse library contains code to handle Eclipse XML files.
 
 Copyright
 ---------
-© 2012-2013 Ludger Solbach
+© 2012-2020 Ludger Solbach
 
 License
 -------
-[Eclipse Public License 1.0] (http://www.eclipse.org/legal/epl-v10.html "EPL 1.0")
+[Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html)
 
 Code Repository
 ---------------
-[https://github.com/lsolbach/CljEclipseLibrary] (https://github.com/lsolbach/CljEclipseLibrary)
+[CljDevTools on GitHub](https://github.com/lsolbach/CljDevTools)
