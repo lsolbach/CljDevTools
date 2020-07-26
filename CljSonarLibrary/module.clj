@@ -9,7 +9,7 @@
  :plugins [["org.soulspace.baumeister/ClojurePlugin"]
            ["org.soulspace.baumeister/ClojureTestPlugin"]
            ["org.soulspace.baumeister/PackagePlugin"]]
- :dependencies [["org.clojure/clojure, 1.8.0"]
+ :dependencies [["org.clojure/clojure, 1.10.1"]
                 ["org.clojure/data.zip, 0.1.1"]
                 ["org.soulspace.clj/xml.core, 0.5.0"]
                 ["org.soulspace.clj/xml.dsl, 0.5.0"]]]
