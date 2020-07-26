@@ -12,9 +12,9 @@
   (:require [clojure.zip :as zip]
             [clojure.data.xml :as xml]
             [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx])
-  (:use [clojure.string :only [split]]
-        [org.soulspace.clj.string :only [parse-number]]))
+            [clojure.data.zip.xml :as zx]
+            [clojure.string :refer [split]]
+            [org.soulspace.clj.string :refer [parse-number]]))
 
 (defn parse-issue-component
   "Parses the component of an issue into a map."
