@@ -2,6 +2,11 @@ tools.artifact
 ==============
 The tools.artifact library contains abstractions and functions for the handling of artifacts and versions.
 
+Usage
+-----
+### Dependency
+
+
 Copyright
 ---------
 © 2012-2020 Ludger Solbach

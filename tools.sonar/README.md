@@ -2,6 +2,11 @@ tools.sonar
 ===========
 The tools.sonar component provides a client for the SonarQube REST API.
 
+Usage
+-----
+### Dependency
+
+
 Copyright
 ---------
 © 2014-2020 Ludger Solbach

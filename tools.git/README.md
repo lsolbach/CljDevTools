@@ -2,6 +2,10 @@ tools.git
 =========
 The tools.git component provides a Clojure api for JGit.
 
+Usage
+-----
+### Dependency
+
 
 Copyright
 ---------

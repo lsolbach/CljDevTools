@@ -5,18 +5,17 @@ This repository contains clojure libraries and components for working with vario
 software development tools.
 
 It contains these modules
- * CljVersionLibrary
- * CljArtifactLibrary
- * CljGitLibrary
- * CljMavenLibrary
- * CljEclipseLibrary
- * CljSonarLibrary
- * CljModelGenerator
+ * tools.artifact
+ * tools.codegen
+ * tools.git
+ * tools.sonar
 
-The modules can be build with Baumeister which is available at [http://downloads.soulspace.org/Baumeister/] (http://downloads.soulspace.org/Baumeister/).
+Licence
+-------
+See the license section in the individual modules.
 
-If you like to add Leiningen project files, feel free and send me a pull
-request.
-
+Copyright
+---------
+© 2011-2020 Ludger Solbach
 
 
