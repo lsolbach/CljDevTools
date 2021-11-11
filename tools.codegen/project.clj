@@ -1,4 +1,4 @@
-(defproject org.soulspace.clj/tools.godegen "0.6.0"
+(defproject org.soulspace.clj/tools.codegen "0.6.0"
   :description "The tools.codegen component is a generator framework for Model Driven Development."
   :url "https://github.com/lsolbach/CljDevTools"
   :license {:name "Eclipse Public License"
