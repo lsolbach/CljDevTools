@@ -110,4 +110,5 @@
   (is (false? (contains-version? (new-version-range) (new-version nil))))
   (is (false? (contains-version? (new-version-range) (new-version "")))))
 
-;(run-tests)
+(comment
+  (run-tests))

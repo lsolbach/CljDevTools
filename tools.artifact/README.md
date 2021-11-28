@@ -4,7 +4,7 @@ The tools.artifact library contains abstractions and functions for the handling 
 
 Usage
 -----
-### Dependency
+[![Clojars Project](https://img.shields.io/clojars/v/org.soulspace.clj/tools.artifact.svg)](https://clojars.org/org.soulspace.clj/tools.artifact)
 
 
 Copyright

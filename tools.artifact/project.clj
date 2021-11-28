@@ -1,4 +1,4 @@
-(defproject org.soulspace.clj/tools.artifact "0.5.0"
+(defproject org.soulspace.clj/tools.artifact "0.5.1"
   :description "The tools.artifact library contains abstractions and functions for the handling of artifacts and versions."
   :url "https://github.com/lsolbach/CljDevTools"
   :license {:name "Eclipse Public License"
