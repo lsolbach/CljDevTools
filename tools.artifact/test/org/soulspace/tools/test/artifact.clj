@@ -9,25 +9,26 @@
 ;;
 
 (ns org.soulspace.tools.test.artifact
-  (:use [clojure.test]
-        [org.soulspace.tools.artifact]))
+  (:require [clojure.test :refer :all]
+            [org.soulspace.tools.artifact :refer :all])
+  (:import [org.soulspace.tools.artifact ArtifactImpl]))
 
 (comment
  (deftest match-identifier-true
-   (is (true? (identifier-match? nil "module")))
-   (is (true? (identifier-match? "" "module")))
-   (is (true? (identifier-match? "module" "module"))))
+   (is (true? (matches-identifier? nil "module")))
+   (is (true? (matches-identifier? "" "module")))
+   (is (true? (matches-identifier? "module" "module"))))
 
  (deftest match-identifier-false
-   (is (false? (identifier-match? "module1" "module"))))
+   (is (false? (matches-identifier? "module1" "module"))))
 
  (deftest match-type-true
-   (is (true? (type-match? nil "jar")))
-   (is (true? (type-match? "" "jar")))
-   (is (true? (type-match? "jar" "jar"))))
+   (is (true? (matches-type? nil "jar")))
+   (is (true? (matches-type? "" "jar")))
+   (is (true? (matches-type? "jar" "jar"))))
 
  (deftest match-type-false
-   (is (false? (type-match? "zip" "jar")))))
+   (is (false? (matches-type? "zip" "jar")))))
 
 
 ; TODO enhance tests for artifact matching
@@ -48,4 +49,5 @@
   (is (false? (matches-artifact? (new-artifact-pattern ["org.soulspace" "module" "1.1.0"]) (new-artifact ["org.soulspace" "module" "1.0.0"])))))
 
 
-;(run-tests)
+(comment
+  (run-tests))

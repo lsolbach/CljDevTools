@@ -10,8 +10,7 @@
 
 (ns org.soulspace.tools.artifact
   (:require [clojure.string :as str]
-            [org.soulspace.clj.string :as sstr]
-            [org.soulspace.tools.version.version]))
+            [org.soulspace.tools.version :as v]))
 
 (declare create-artifact)
 
@@ -33,7 +32,6 @@
   (new-artifact-version [artifact version]))
   ;(conflicting-version? [this other] "Returns true, if version of both artifacts is not the same.")
 
-
 (defrecord ArtifactImpl [project module version name type]
   Artifact
   (artifact-name [artifact]
@@ -52,14 +50,14 @@
   (same-module? [this other]
     (and (= (:project this) (:project other)) (= (:module this) (:module other))))
   (same-module-version? [this other]
-    (and (same-version? (:version this) (:version other))))
+    (and (v/same-version? (:version this) (:version other))))
   (same-artifact? [this other]
     (= this other))
   (same-artifact-apart-from-version? [this other]
     (and (same-module? this other)
          (= (:name this) (:name other)) (= (:type this) (:type other))))
   (compatible-artifact-version? [this other]
-    (and (same-module? this other) (same-version? (:version this) (:version other))))
+    (and (same-module? this other) (v/same-version? (:version this) (:version other))))
   (new-artifact-version [artifact version]
     (create-artifact (:project artifact) (:module artifact) version (:name artifact) (:type artifact))))
 
@@ -73,7 +71,7 @@
   Artifact
   (artifact-name [artifact]
     (str (:name artifact)
-         (if (seq classifier) classifier)
+         (when (seq classifier) classifier)
          "." (:type artifact)))
   (artifact-version [artifact]
     (:string (:version artifact)))
@@ -89,27 +87,27 @@
   MavenArtifact
   (mvn-artifact-name [artifact]
     (str name "-" (artifact-version artifact)
-         (if (seq classifier) (str "-" classifier))
+         (when (seq classifier) (str "-" classifier))
          "." type)))
 
 
 (defn create-artifact
   ([project module]
-   (ArtifactImpl. project module (new-version nil) module "jar"))
+   (ArtifactImpl. project module (v/new-version nil) module "jar"))
   ([project module version]
-   (ArtifactImpl. project module (new-version version) module "jar"))
+   (ArtifactImpl. project module (v/new-version version) module "jar"))
   ([project module version name]
-   (ArtifactImpl. project module (new-version version) name "jar"))
+   (ArtifactImpl. project module (v/new-version version) name "jar"))
   ([project module version name type]
-   (ArtifactImpl. project module (new-version version) name type))
+   (ArtifactImpl. project module (v/new-version version) name type))
   ([project module version name type classifier]
-   (MavenArtifactImpl. project module (new-version version) name type classifier)))
+   (MavenArtifactImpl. project module (v/new-version version) name type classifier)))
 
 (defn matches-identifier? [pattern name]
   (or (nil? pattern)
       (empty? pattern)
       ; TODO match pattern, not just starts with
-      (starts-with pattern name)))
+      (str/starts-with? name pattern)))
 
 (defn matches-type? [pattern type]
   (or (nil? pattern)
@@ -131,7 +129,7 @@
     (and
      (matches-identifier? (:project pattern) (:project artifact))
      (matches-identifier? (:module pattern) (:module artifact))
-     (contains-version? (:version-range pattern) (:version artifact))
+     (v/contains-version? (:version-range pattern) (:version artifact))
      (matches-identifier? (:name pattern) (:name artifact))
      (matches-type? (:type pattern) (:type artifact)))))
 
@@ -140,21 +138,21 @@
 ; (e.g. a 'nil' module in the pattern will match every module in the project)
 (defn create-artifact-pattern
   ([project]
-   (ArtifactPatternImpl. project nil (new-version-range) nil nil))
+   (ArtifactPatternImpl. project nil (v/new-version-range) nil nil))
   ([project module]
-   (ArtifactPatternImpl. project module (new-version-range) module nil))
+   (ArtifactPatternImpl. project module (v/new-version-range) module nil))
   ([project module range]
-   (ArtifactPatternImpl. project module (new-version-range range) module nil))
+   (ArtifactPatternImpl. project module (v/new-version-range range) module nil))
   ([project module range name]
-   (ArtifactPatternImpl. project module (new-version-range range) name nil))
+   (ArtifactPatternImpl. project module (v/new-version-range range) name nil))
   ([project module range name type]
-   (ArtifactPatternImpl. project module (new-version-range range) name type)))
+   (ArtifactPatternImpl. project module (v/new-version-range range) name type)))
 
 ;(def artifact-hierarchy (make-hierarchy))
 
 (defn parse-artifact-string
   [s]
-  (map trim (split s #"(/|:|;|,)")))
+  (map str/trim (str/split s #"(/|:|;|,)")))
 
 ; TODO use hierarchy
 (defmulti new-artifact type)

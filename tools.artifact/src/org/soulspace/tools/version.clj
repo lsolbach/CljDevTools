@@ -9,7 +9,7 @@
 ;;
 
 (ns org.soulspace.tools.version
-  (:require [clojure.string :refer [split]]))
+  (:require [clojure.string :as str]))
 
 ;
 ; version comparison utils
@@ -29,9 +29,9 @@
 (defn split-version-string
   "Splits a version string into revision components."
   ([version]
-   (split version #"[.]"))
+   (str/split version #"[.]"))
   ([version re]
-   (split version re)))
+   (str/split version re)))
 
 ; TODO still needed?
 (defn version-match?
