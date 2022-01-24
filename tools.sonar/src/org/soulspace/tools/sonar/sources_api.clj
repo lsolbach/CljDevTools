@@ -9,8 +9,9 @@
 ;;
 
 (ns org.soulspace.tools.sonar.sources-api
-  (:use [org.soulspace.clj.xml zip]
-        [org.soulspace.tools.sonar common sources-model]))
+  (:require [org.soulspace.xml.zip :as sxml]
+            [org.soulspace.tools.sonar.common :as c]
+            [org.soulspace.tools.sonar.sources-model :as sm]))
 
 (defn sources-api
   "Returns the URL for the sources API."
@@ -20,4 +21,4 @@
 (defn sources-query-url
   "Returns the url for a resource query."
   ([param-map]
-   (str sources-api "?" (query-parameters param-map))))
+   (str sources-api "?" (c/query-parameters param-map))))

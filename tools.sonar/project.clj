@@ -1,4 +1,4 @@
-(defproject org.soulspace.clj/tools.sonar "0.2.0"
+(defproject org.soulspace.clj/tools.sonar "0.3.0"
   :description "The tools.sonar component provides a client for the SonarQube REST API."
   :url "https://github.com/lsolbach/CljDevTools"
   :license {:name "Eclipse Public License"

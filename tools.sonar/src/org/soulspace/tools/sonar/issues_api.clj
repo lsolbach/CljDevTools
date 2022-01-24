@@ -9,12 +9,9 @@
 ;;
 
 (ns org.soulspace.tools.sonar.issues-api
-  (:require [clojure.zip :as zip]
-            [clojure.data.xml :as xml]
-            [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx])
-  (:use [org.soulspace.clj.xml zip]
-        [org.soulspace.tools.sonar common issues-model]))
+  (:require [org.soulspace.xml.zip :as sxml]
+            [org.soulspace.tools.sonar.common :as c]
+            [org.soulspace.tools.sonar.issues-model :as im]))
 
 (def severities [:BLOCKER :CRITICAL :MAJOR :MINOR :INFO])
 
@@ -26,7 +23,7 @@
 (defn issue-query-url
   "Returns the url for an issue search query."
   ([param-map]
-   (str issue-search-api "?" (query-parameters param-map))))
+   (str issue-search-api "?" (c/query-parameters param-map))))
 
 (defn component-to-file
   [component ext]
@@ -50,7 +47,7 @@
 (defn get-issues-page
   "Returns a map with the information of a page of issues."
   [param-map page]
-  (parse-issues (xml-zipper (issue-query-url (assoc param-map :pageIndex page)))))
+  (im/parse-issues (sxml/xml-zipper (issue-query-url (assoc param-map :pageIndex page)))))
 
 (defn get-issues
   "Returns a map of all issues matching the parameters. Sonar issue paging is handled transparently."

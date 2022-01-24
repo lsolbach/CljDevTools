@@ -9,10 +9,7 @@
 ;;
 
 (ns org.soulspace.tools.sonar.issues-model
-  (:require [clojure.zip :as zip]
-            [clojure.data.xml :as xml]
-            [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx]
+  (:require [clojure.data.zip.xml :as zx]
             [clojure.string :refer [split]]
             [org.soulspace.clj.string :refer [parse-number]]))
 
@@ -26,16 +23,16 @@
      :source source}))
 
 (defn parse-paging
-  [zipper]
   "Returns a map with the paging data of the issues page."
+  [zipper]
   {:page-index (parse-number (zx/xml1-> zipper :pageIndex zx/text))
    :page-size (parse-number (zx/xml1-> zipper :pageSize zx/text))
    :total (parse-number (zx/xml1-> zipper :total zx/text))
    :pages (parse-number (zx/xml1-> zipper :pages zx/text))})
 
 (defn parse-comment
-  [zipper]
   "Returns a map with the data of a comment."
+  [zipper]
   {:key (zx/xml1-> zipper :key zx/text)
    :login (zx/xml1-> zipper :login zx/text)
    :html-text (zx/xml1-> zipper :htmlText zx/text)

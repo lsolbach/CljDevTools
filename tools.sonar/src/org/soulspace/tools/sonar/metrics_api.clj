@@ -9,12 +9,9 @@
 ;;
 
 (ns org.soulspace.tools.sonar.metrics-api
-  (:require [clojure.zip :as zip]
-            [clojure.data.xml :as xml]
-            [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx])
-  (:use [org.soulspace.clj.xml zip]
-        [org.soulspace.tools.sonar common metrics-model]))
+  (:require [org.soulspace.xml.zip :as sxml]
+            [org.soulspace.tools.sonar.common :as c]
+            [org.soulspace.tools.sonar.metrics-model :as mm]))
 
 (defn metrics-api
   "Returns the URL for the metrics API."
@@ -24,13 +21,13 @@
 (defn metrics-query-url
   "Returns the url for a metrics query."
   ([param-map]
-   (str metrics-api "?" (query-parameters param-map)))
+   (str metrics-api "?" (c/query-parameters param-map)))
   ([param-map metric]
-   (str metrics-api "/" metric "?" (query-parameters param-map))))
+   (str metrics-api "/" metric "?" (c/query-parameters param-map))))
 
 (defn get-metrics
   "Returns a sequence of the metrics matching the parameters."
   ([param-map]
-   (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml})))))
+   (mm/parse-metrics (sxml/xml-zipper (metrics-query-url (merge param-map {:format :xml})))))
   ([param-map metric]
-   (parse-metrics (xml-zipper (metrics-query-url (merge param-map {:format :xml}) metric)))))
+   (mm/parse-metrics (sxml/xml-zipper (metrics-query-url (merge param-map {:format :xml}) metric)))))

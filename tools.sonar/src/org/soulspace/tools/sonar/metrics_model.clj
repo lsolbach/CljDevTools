@@ -9,10 +9,7 @@
 ;;
 
 (ns org.soulspace.tools.sonar.metrics-model
-  (:require [clojure.zip :as zip]
-            [clojure.data.xml :as xml]
-            [clojure.data.zip :as zf]
-            [clojure.data.zip.xml :as zx]))
+  (:require [clojure.data.zip.xml :as zx]))
 
 
 (defn parse-metric
@@ -29,6 +26,6 @@
    :hidden (zx/xml1-> zipper :hidden zx/text)})
 
 (defn parse-metrics
-  [zipper]
   "Returns a map with the data of a metrics response."
+  [zipper]
   (map parse-metric (zx/xml-> zipper :metric)))
