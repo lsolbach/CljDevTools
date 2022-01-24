@@ -1,4 +1,4 @@
-(ns org.soulspace.tools.info
+(ns org.soulspace.tools.project-info
   (:require [clojure.data.json :as json]
             [clojure.data.xml :as xml]))
 
@@ -34,7 +34,7 @@
 ;  (-> (slurp (contributors-url p))))
 
 (comment
-  (contributors "lsolbach/CljBase"))
+  (contributors-url "lsolbach/CljBase"))
 
 ;;;
 ;;; Apache handling

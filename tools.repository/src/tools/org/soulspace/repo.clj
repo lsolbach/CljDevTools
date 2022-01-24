@@ -336,7 +336,7 @@
          (walk/prewalk #(if (string? %)
                           (prop/replace-properties-recursive properties %)
                           %))))) ; recursive replacement to handle nested properties
-;    (assoc m :properties properties))) ; reinsert properties
+;    (assoc pom :properties properties))) ; reinsert properties
 
 (defn managed-versions
   "Transforms the dependency manangement list into a map of artifact keys to versions."
