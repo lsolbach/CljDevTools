@@ -1,4 +1,4 @@
-(ns org.soulspace.org.soulspace.tools.repo
+(ns org.soulspace.tools.repo
   (:require [clojure.string :as str]
             [clojure.walk :as walk]
             [clojure.spec.alpha :as s]
@@ -94,8 +94,7 @@
 (defn artifact-key
   "Returns a string key for the artifact a, disregarding a version."
   [a]
-  (str (when-let [group-id (:group-id a)]
-         (str group-id "/")) (:artifact-id a)))
+  (str (:group-id a) "/" (:artifact-id a)))
 
 (defn artifact-version-key
   "Returns a string key for the artifact a including a version."

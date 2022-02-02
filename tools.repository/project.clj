@@ -1,4 +1,4 @@
-(defproject org.soulspace.clj/tools.repository "0.1.0"
+(defproject org.soulspace.clj/tools.repository "0.2.0"
   :description "The tools.repository component provides tools to handle (maven) repositories and artifacts."
   :url "https://github.com/lsolbach/CljDevTools"
   :license {:name "Eclipse Public License"
