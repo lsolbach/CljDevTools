@@ -120,7 +120,7 @@
 (s/def ::repository (s/keys :req-un [::id ::url ::name]
                             :opt-un [::username ::password ::releases ::snapshots ::layout]))
 
-(def user-home "/home/soulman") ; Use HOME env
+(def user-home (System/getProperty "user.home"))
 (def local-repository (str user-home "/.m2/repository"))
 
 (def hash-schemes #{"asc" "md5" "sha1"})
@@ -137,29 +137,38 @@
 
 (defn artifact-local-path
   "Returns the path of the artifact in the local filesystem."
-  [a]
-  (str local-repository "/" (artifact-relative-path a)))
+  ([a]
+   (str local-repository "/" (artifact-relative-path a))))
 
 (defn artifact-version-local-path
   "Returns the path of the artifact in the local filesystem."
-  [a]
-  (str local-repository "/" (artifact-version-relative-path a)))
+  ([a]
+   (str local-repository "/" (artifact-version-relative-path a))))
 
 (defn artifact-filename
   "Returns the filename of the artifact in the repository.
-   Takes the extension as an optional parameter."
+   Takes classifier and extension as an optional parameter."
   ([a]
-   (artifact-filename a "jar"))
-  ([a ext]
-   (str (:artifact-id a) "-" (:version a) "." ext)))
+   (artifact-filename nil "jar" a))
+  ([extension a]
+   (artifact-filename nil extension a))
+  ([classifier extension a]
+   (str (:artifact-id a)
+        (when classifier (str "-" classifier))
+        "-" (:version a)
+        "." extension)))
 
 (defn artifact-url
-  "Returns the URL of the artifact on the remote server."
+  "Returns the URL of the artifact on the remote server.
+   Takes classifier and extension as an optional parameter."
   ([repo a]
-   (artifact-url repo a "jar"))
-  ([repo a ext]
+   (artifact-url repo "jar" a))
+  ([repo extension a]
    (str (:url repo) "/" (artifact-version-relative-path a)
-        "/" (artifact-filename a ext))))
+        "/" (artifact-filename extension a)))
+  ([repo classifier extension a]
+   (str (:url repo) "/" (artifact-version-relative-path a)
+        "/" (artifact-filename classifier extension a))))
 
 (defn artifact-metadata-url
   "Returns the URL to the maven metadata of the artifact."
@@ -168,30 +177,41 @@
        "/" (:artifact-id a) "/maven-metadata.xml"))
 
 (defn local-artifact?
-  "Checks if the repository has the local artifact a."
-  [a]
-  (file/is-dir? (io/as-file (artifact-version-local-path a))))
+  "Checks if the repository has the local artifact a.
+   Takes classifier and extension as an optional parameter."
+  ([a]
+   (local-artifact? nil "jar" a))
+  ([extension a]
+   (local-artifact? nil extension a))
+  ([classifier extension a]
+   (file/is-dir? (io/as-file (artifact-version-local-path classifier extension a)))))
 
 (defn remote-artifact?
-  "Checks if the repository has the remote artifact a."
+  "Checks if the repository has the remote artifact a.
+   Takes classifier and extension as an optional parameter."
   ([repo a]
-   (remote-artifact? repo a "jar"))
-  ([repo a ext]
-   (= 200 (:status @(http/request {:url (artifact-url repo a ext)
+   (remote-artifact? repo nil "jar" a))
+  ([repo extension a]
+   (remote-artifact? repo nil extension a))
+  ([repo classifier extension a]
+   (= 200 (:status @(http/request {:url (artifact-url repo classifier extension a)
                                    :method :head
                                    :timeout 1000})))))
 
 (defn download-artifact
-  "Fetches the artifact a."
+  "Downloads the artifact a from the repository.
+   Takes classifier and extension as an optional parameter."
   ([repo a]
-   (download-artifact repo a "jar"))
-  ([repo a ext]
-   (let [url (io/as-url (artifact-url repo a ext))
+   (download-artifact repo nil "jar" a))
+  ([repo extension a]
+   (download-artifact repo nil extension a))
+  ([repo classifier extension a]
+   (let [url (io/as-url (artifact-url repo classifier extension a))
          local-path (artifact-version-local-path a)]
      (when-not (file/exists? local-path) ; missing local directory
        (file/create-dir (io/as-file local-path))) ; create it
      (io/copy (io/input-stream url)
-              (io/as-file (str local-path "/" (artifact-filename a ext)))))))
+              (io/as-file (str local-path "/" (artifact-filename classifier extension a)))))))
 
 ;;
 ;; repositories
@@ -235,7 +255,7 @@
   [a]
   (when-not (local-artifact? a)
     (cache-artifact a))
-  (mvnx/read-pom-xml (str (artifact-version-local-path a) "/" (artifact-filename a "pom"))))
+  (mvnx/read-pom-xml (str (artifact-version-local-path a) "/" (artifact-filename "pom" a))))
 
 (defn merge-build-section
   "Merges the build of parent POM p1 and child POM p2"
@@ -378,19 +398,28 @@
 ;;; artifact dependency handling
 ;;;
 
-(defn excluded?
-  "Checks, if the artifact is in the set of exclusions."
-  [exclusions a]
-  (contains? exclusions (artifact-key a)))
+(defn resolved?
+  "Checks, if the artifact is already resolved."
+  [resolved a]
+  (contains? resolved (artifact-key a))) ; TODO artifack-version-key?
 
 (defn cycle?
   "Checks, if the artifact produces a cycle."
   [a])
 
-(defn resolved?
-  "Checks, if the artifact is already resolved."
-  [resolved a]
-  (contains? resolved (artifact-key a))) ; TODO artifack-version-key?
+(defn excluded?
+  "Checks, if the artifact is in the set of exclusions."
+  [exclusions a]
+  (contains? exclusions (artifact-key a)))
+
+(defn exclude-artifact
+  "Returns the exclusions collection with the artifact key added."
+  [exclusions a]
+  (let [k (artifact-key a)]
+    (if (contains? k)
+      exclusions ; artifact key already contained
+      (conj exclusions k) ; not contained, add artifact key 
+      )))
 
 (defn build-dependency-node
   "Creates a node for the dependency tree."
@@ -398,9 +427,9 @@
   {:group-id (:group-id a)
    :artifact-id (:artifact-id a)
    :version (:version a)
-   :exclusions ()
-   :dependencies ()
-   :scope ()}
+   :exclusions #{}
+   :dependencies []
+   :scope ""}
   )
 
 ; transitive dependency resolution with depth first search
@@ -412,14 +441,18 @@
   (let [pom (pom-for-artifact a)
         dependencies (:dependencies pom)
         exclusions (get-in pom [:dependencies :exclusions])]
-    (loop [deps dependencies]
+    (loop [deps dependencies includes []]
       (if (seq deps)
-        (resolve-dependencies (first deps))
-        (recur (rest deps))))))
+        (let [dep (first deps)]
+          (println dep)
+          (resolve-dependencies (first deps)))
+        (recur (rest deps) includes))) ; FIXME build dep node and include
+    ))
 
 (comment
+  (str "a-" nil "-b")
   (artifact-relative-path {:group-id "a" :artifact-id "b" :version "1.0"})
-  (artifact-filename  {:id "clojars"} {:group-id "a" :artifact-id "b" :version "1.0"})
+  (artifact-filename {:group-id "a" :artifact-id "b" :version "1.0"})
   (artifact-local-path {:group-id "a" :artifact-id "b" :version "1.0"})
   (artifact-url {:id "clojars" :remote "http://repo.clojars.org"}
                 {:group-id "a" :artifact-id "b" :version "1.0"})
