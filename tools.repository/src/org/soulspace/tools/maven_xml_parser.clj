@@ -516,7 +516,7 @@
 (defn parse-pom
   "Parses a POM entry."
   [{tag :tag content :content}]
-  (println "parse-pom:" tag)
+;  (println "parse-pom:" tag)
   (case tag
     :modelVersion [:model-version (first content)]
     :groupId [:group-id (first content)]
