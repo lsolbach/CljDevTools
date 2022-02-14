@@ -15,3 +15,7 @@ Change Log
 -----
 * added support for classifiers
 
+0.3.1
+-----
+* added classifier and extension parameters to cache-artifact
+

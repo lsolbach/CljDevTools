@@ -184,7 +184,8 @@
   ([extension a]
    (local-artifact? nil extension a))
   ([classifier extension a]
-   (file/is-dir? (io/as-file (artifact-version-local-path classifier extension a)))))
+   ; TODO check artifact, not dir
+   (file/is-dir? (io/as-file (artifact-version-local-path a)))))
 
 (defn remote-artifact?
   "Checks if the repository has the remote artifact a.
@@ -237,16 +238,18 @@
 (defn cache-artifact
   "Downloads and caches an artifact including it's associated pom."
   ([a]
-   (cache-artifact a "jar"))
-  ([a ext]
+   (cache-artifact nil "jar" a))
+  ([extension a]
+   (cache-artifact nil extension a))
+  ([classifier extension a]
    (println "caching artifact" a)
    (loop [repos @repositories]
      (when-let [repo  (first repos)]
-       (if (remote-artifact? repo a)
+       (if (remote-artifact? repo classifier extension a)
          (do ; TODO download checksums and common classified artifacts too
            (println "downloading from repo" (:name repo))
-           (download-artifact repo a "pom")
-           (download-artifact repo a ext)
+           (download-artifact repo "pom" a)
+           (download-artifact repo classifier extension a)
            (println "artifact cached"))
          (recur (rest repos)))))))
 
@@ -416,7 +419,7 @@
   "Returns the exclusions collection with the artifact key added."
   [exclusions a]
   (let [k (artifact-key a)]
-    (if (contains? k)
+    (if (contains? exclusions k)
       exclusions ; artifact key already contained
       (conj exclusions k) ; not contained, add artifact key 
       )))
