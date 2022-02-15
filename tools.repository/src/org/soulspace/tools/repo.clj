@@ -184,8 +184,9 @@
   ([extension a]
    (local-artifact? nil extension a))
   ([classifier extension a]
-   ; TODO check artifact, not dir
-   (file/is-dir? (io/as-file (artifact-version-local-path a)))))
+   ;(file/is-dir? (io/as-file (artifact-version-local-path a)))
+   (file/exists? (io/as-file (str (artifact-version-local-path a)
+                                  "/" (artifact-filename classifier extension a))))))
 
 (defn remote-artifact?
   "Checks if the repository has the remote artifact a.
