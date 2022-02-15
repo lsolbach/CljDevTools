@@ -154,8 +154,8 @@
    (artifact-filename nil extension a))
   ([classifier extension a]
    (str (:artifact-id a)
-        (when classifier (str "-" classifier))
         "-" (:version a)
+        (when classifier (str "-" classifier))
         "." extension)))
 
 (defn artifact-url
