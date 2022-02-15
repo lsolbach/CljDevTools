@@ -26,3 +26,7 @@ Change Log
 0.3.3
 -----
 * check for concrete artifacts in local-artifact? function
+
+0.3.4
+-----
+* removed debug output in cache-artifact

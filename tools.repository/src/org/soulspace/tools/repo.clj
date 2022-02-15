@@ -243,15 +243,14 @@
   ([extension a]
    (cache-artifact nil extension a))
   ([classifier extension a]
-   (println "caching artifact" a)
+   ; (println "caching artifact" (artifact-filename classifier extension a))
    (loop [repos @repositories]
      (when-let [repo  (first repos)]
        (if (remote-artifact? repo classifier extension a)
          (do ; TODO download checksums and common classified artifacts too
-           (println "downloading from repo" (:name repo))
+           ; (println "downloading from repo" (:name repo))
            (download-artifact repo "pom" a)
-           (download-artifact repo classifier extension a)
-           (println "artifact cached"))
+           (download-artifact repo classifier extension a))
          (recur (rest repos)))))))
 
 (defn read-artifact-pom

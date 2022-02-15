@@ -5,7 +5,7 @@ The tools.repository component provides functions for maven artifact and reposit
 Usage
 -----
 ### Dependency
-
+[![Clojars Project](https://img.shields.io/clojars/v/org.soulspace.clj/tools.repository.svg)](https://clojars.org/org.soulspace.clj/tools.repository)
 
 Copyright
 ---------
