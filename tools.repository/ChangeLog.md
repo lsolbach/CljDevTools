@@ -19,3 +19,10 @@ Change Log
 -----
 * added classifier and extension parameters to cache-artifact
 
+0.3.2
+-----
+* fixed artifact filename for classified artifacts
+
+0.3.3
+-----
+* check for concrete artifacts in local-artifact? function
