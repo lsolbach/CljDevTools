@@ -34,3 +34,7 @@ Change Log
 0.3.5
 -----
 * added type and classifier fields for dependency in maven xml parser
+
+0.3.6
+-----
+* enhanced maven xml parsing

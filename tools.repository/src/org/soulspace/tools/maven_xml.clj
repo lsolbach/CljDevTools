@@ -37,6 +37,25 @@
   (parse-xml mvn/parse-metadata-xml source))
 
 (comment
+  (mvn/parse-pom-xml
+   (xml/parse-str
+    "<project>
+     <modelVersion>4.0.0</modelVersion>
+     <groupId>org.soulspace.clj</groupId>
+     <artifactId>clj.java</artifactId>
+     <version>0.8.3</version>
+     <dependencyManagement>
+       <dependencies>
+         <dependency>
+           <groupId>org.soulspace.clj</groupId>
+           <artifactId>clj.java</artifactId>
+           <version>0.8.3</version>
+         </dependency>
+       </dependencies>
+     </dependencyManagement>
+     </project>"))
+  )
+(comment
   (read-pom-xml "/home/soulman/tmp/repository/org/soulspace/clj/clj.base/0.8.3/clj.base-0.8.3.pom")
   (read-settings-xml "/home/soulman/.m2/settings.xml")
   (read-metadata-xml "/home/soulman/.m2/repository/org/soulspace/clj/clj.base/maven-metadata-clojars.xml")

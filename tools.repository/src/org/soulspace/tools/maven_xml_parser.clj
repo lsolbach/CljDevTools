@@ -55,6 +55,7 @@
     :classifier [:classifier (first content)]
     :scope [:scope (first content)]
     :type [:type (first content)]
+    :optional [:optional (first content)]
     :exclusions [:exclusions (into [] (map parse-exclusions) content)]))
 
 (defn parse-dependencies
@@ -162,7 +163,7 @@
   (case tag
     :system [:system (first content)]
     :url [:url (first content)]
-    :notifiers [:notifiers (into {} (map parse-notifier) content)]))
+    :notifiers [:notifiers (into {} (map parse-notifier) (get-content :notifiers content))]))
 
 (defn parse-scm
   "Parses a scm entry."
@@ -212,11 +213,12 @@
   "Parses a configuration entry."
   [{tag :tag content :content}]
 ;  (println "parse-configuration:" tag)
-  (case tag ; TODO cond with default parse-kv?
-    :items [:items (into [] (map (partial get-content :item)) content)]
-    :tasks [:tasks ""] ; TODO add tasks
-    :configLocation [:config-location (first content)]
-    :enableRulesSummary [:enable-rules-summary (first content)]))
+;  (case tag ; TODO cond with default parse-kv?
+;    :items [:items (into [] (map (partial get-content :item)) content)]
+;    :tasks [:tasks ""] ; TODO add tasks
+;    :configLocation [:config-location (first content)]
+;    :enableRulesSummary [:enable-rules-summary (first content)])
+  )
 
 (defn parse-execution
   "Parses a plugin execution entry."
@@ -329,7 +331,10 @@
     :testSourceDirectory [:test-source-directory (first content)]
     :outputDirectory [:output-directory (first content)]
     :testOutputDirectory [:test-output-directory (first content)]
-    :extensions [:extensions (into [] (map parse-extension) content)]
+    :extensions [:extensions
+                 (into []
+                       (map parse-extension)
+                       (get-content :extensions content))]
     :finalName [:final-name (first content)]
     :filters [:filters (into [] (map (partial get-content :filter)) content)]
     :resources [:resources
@@ -386,6 +391,7 @@
     :groupId [:group-id (first content)]
     :artifactId [:artifact-id (first content)]
     :version [:version (first content)]
+    :inherited [:inherited (first content)]
     :reportSets [:report-sets (into [] (map parse-report-sets) content)]
     :configuration [:configuration ; (into {} (map parse-configuration) content)
                     []] ; TODO
@@ -573,7 +579,7 @@
     :password [:password (first content)]
     :privateKey [:private-key (first content)]
     :passphrase [:passphrase (first content)]
-    :filePermissions [:filePermissions (first content)]
+    :filePermissions [:file--permissions (first content)]
     :directoryPermissions [:directory-permissions (first content)]
     :configuration [:configuration nil])) ; TODO
 
@@ -716,3 +722,4 @@
   "Parses a maven POM xml."
   [entry]
   (into {} (map parse-metadata) (get-content :metadata entry)))
+
