@@ -30,3 +30,7 @@ Change Log
 0.3.4
 -----
 * removed debug output in cache-artifact
+
+0.3.5
+-----
+* added type and classifier fields for dependency in maven xml parser

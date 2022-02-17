@@ -25,7 +25,7 @@
 (defn parse-parent
   "Parses the parent entry."
   [{tag :tag content :content}]
-  (println "parse-parent:" tag)
+;  (println "parse-parent:" tag)
   (case tag
     :groupId [:group-id (first content)]
     :artifactId [:artifact-id (first content)]
@@ -52,7 +52,9 @@
     :groupId [:group-id (first content)]
     :artifactId [:artifact-id (first content)]
     :version [:version (first content)]
+    :classifier [:classifier (first content)]
     :scope [:scope (first content)]
+    :type [:type (first content)]
     :exclusions [:exclusions (into [] (map parse-exclusions) content)]))
 
 (defn parse-dependencies
