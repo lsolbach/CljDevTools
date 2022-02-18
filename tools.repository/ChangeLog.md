@@ -38,3 +38,7 @@ Change Log
 0.3.6
 -----
 * enhanced maven xml parsing
+
+0.3.7
+-----
+* add (preliminary) handling of package urls
