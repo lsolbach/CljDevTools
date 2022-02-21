@@ -256,9 +256,21 @@
 (defn read-artifact-pom
   "Returns the POM of the artifact."
   [a]
-  (when-not (local-artifact? a)
-    (cache-artifact a))
+  ; (println "reading " a)
+  (when-not (local-artifact? "pom" a)
+    (cache-artifact "pom" a))
   (mvnx/read-pom-xml (str (artifact-version-local-path a) "/" (artifact-filename "pom" a))))
+
+(defn managed-dependencies
+  "Returns the list of managed dependencies of th POM."
+  [pom]
+  (get-in pom [:dependency-management :dependencies]))
+
+(defn managed-versions
+  "Transforms the dependency manangement list into a map of artifact keys to versions."
+  [pom]
+  (into {} (map #(vector (artifact-key %) (:version %))
+                (managed-dependencies pom))))
 
 (defn merge-build-section
   "Merges the build of parent POM p1 and child POM p2"
@@ -297,10 +309,20 @@
                                   (:plugin-management p2))})
 
 (defn merge-reporting-section
-  "Merges the reporting of parent POM p1 and child POM p2"
+  "Merges the reporting section of parent POM p1 and child POM p2."
   [p1 p2]
-  ; TODO
-  )
+  {:exclude-defaults (if (contains? p2 :exclude-defaults)
+                       (:exclude-defaults p2)
+                       (:exclude-defaults p1))
+   :output-directory (if (contains? p2 :output-directory)
+                       (:output-directory p2)
+                       (:output-directory p1))
+   :plugins (into [] (concat (:plugins p2) (:plugins p1)))
+   :inherited  (if (contains? p2 :inherited)
+                 (:inherited p2)
+                 (:inherited p1))
+  ; TODO add configuration
+  })
 
 (defn merge-poms
   "Merges a parent POM p1 and a child POM p2."
@@ -312,6 +334,8 @@
     :artifact-id (:artifact-id p2)
     :version (:version p2)
     :packaging (:packaging p2)
+    :dependency-management {:dependencies (into [] (concat (managed-dependencies p2)
+                                                           (managed-dependencies p1)))}
     :dependencies (into [] (concat (:dependencies p1) (:dependencies p2)))
     :parent (:parent p2)
     :modules (:modules p2)
@@ -325,8 +349,8 @@
                 (:licenses p2)
                 (:licenses p1)) ; TODO check
     :organization (:organization p2)
-    :developers (into [] (concat (:developers p1) (:developers p2)))
-    :contributors (into [] (concat (:contributors p1) (:contributors p2)))
+    :developers (into [] (concat (:developers p2) (:developers p1)))
+    :contributors (into [] (concat (:contributors p2) (:contributors p1)))
     :issue-management (if (contains? p2 :issue-management)
                         (:issue-management p2)
                         (:issue-management p1)) ; TODO check
@@ -340,13 +364,13 @@
            (:scm p2)
            (:scm p1)) ; TODO check
     :prerequisites (:prerequisites p2)
-    :repositories (into [] (concat (:repositories p1) (:repositories p2)))
-    :plugin-repositories (into [] (concat (:plugin-repositories p1)
-                                          (:plugin-repositories p2)))
+    :repositories (into [] (concat (:repositories p2) (:repositories p1)))
+    :plugin-repositories (into [] (concat (:plugin-repositories p2)
+                                          (:plugin-repositories p1)))
     :distribution-management (if (contains? p2 :distribution-management)
                                (:distribution-management p2)
                                (:distribution-management p1)) ; TODO check
-    :profiles (into [] (concat (:profiles p1) (:profiles p2)))}))
+    :profiles (into [] (concat (:profiles p2) (:profiles p1)))}))
 
 (defn replace-properties-in-pom
   "Returns the map for of the POM with the properties replaced with their values."
@@ -360,11 +384,6 @@
                           %))))) ; recursive replacement to handle nested properties
 ;    (assoc pom :properties properties))) ; reinsert properties
 
-(defn managed-versions
-  "Transforms the dependency manangement list into a map of artifact keys to versions."
-  [pom]
-  (into {} (map #([(artifact-key %) (:version %)]) (:dependency-management pom))))
-
 (comment
   (prop/replace-properties {:version "1.5"} "${version}")
   (prop/replace-properties-recursive {:coords "a/b [${version}]"
@@ -375,7 +394,7 @@
   "Builds the project object model map for the artifact by loading and merging the POM and it's parent POM's, if any."
   [a]
   (loop [artifact a poms []]
-    (println "reading pom for" artifact)
+    ; (println "reading pom for" artifact)
     (let [pom (read-artifact-pom artifact)]
       (if-let [parent (:parent pom)]
         (recur parent (conj poms pom)) ; add parent pom to the vector 
@@ -384,6 +403,9 @@
              (reverse)
              (reduce merge-poms)
              (replace-properties-in-pom))))))
+
+; Cache calls, TODO: use real cache
+; (def pom-for-artifact (memoize pom-for-artifact))
 
 ;;;
 ;;; dependencies
@@ -426,31 +448,73 @@
 
 (defn build-dependency-node
   "Creates a node for the dependency tree."
-  [a]
-  {:group-id (:group-id a)
-   :artifact-id (:artifact-id a)
-   :version (:version a)
-   :exclusions #{}
-   :dependencies []
-   :scope ""}
-  )
+  ([a]
+   {:group-id (:group-id a)
+    :artifact-id (:artifact-id a)
+    :version (:version a)
+    :exclusions #{}
+    :dependencies []
+    :scope ""})
+  ([a dependencies]
+   ))
 
 ; transitive dependency resolution with depth first search
 ; build up exclusions on the way down and inclusions on the way up
 (defn resolve-dependencies
   "Resolves the (transitive) dependencies of the artifact."
-  [a]
-  (println (artifact-version-key a))
-  (let [pom (pom-for-artifact a)
-        dependencies (:dependencies pom)
-        exclusions (get-in pom [:dependencies :exclusions])]
-    (loop [deps dependencies includes []]
-      (if (seq deps)
-        (let [dep (first deps)]
-          (println dep)
-          (resolve-dependencies (first deps)))
-        (recur (rest deps) includes))) ; FIXME build dep node and include
-    ))
+  ([a]
+   (println "resolve dependencies for artifact" (artifact-version-key a))
+   (build-dependency-node a))
+  ([d path exclusions]
+   (let [pom (pom-for-artifact d)
+         dm (managed-versions pom)
+         dependencies (:dependencies pom)
+         exclusions (get-in pom [:dependencies :exclusions])]
+     (loop [deps dependencies path []]
+       (if (seq deps)
+         (let [dep (first deps)]
+           (println dep)
+           (resolve-dependencies (first deps)))
+         (recur (rest deps) path))) ; FIXME build dep node and include
+     )))
+
+(defn excludes?
+  ""
+  [e dep]
+  (contains? (into {} (map artifact-key e)) (artifact-key dep)))
+
+
+(defn versioned-dependency
+  ""
+  [dm dependency]
+  (if (nil? (:version dependency))
+    (assoc dependency :version (dm (artifact-key dependency)))
+    dependency))
+
+(defn print-deps
+  "Print dependencies."
+  ([dep]
+   (let [pom (pom-for-artifact dep)]
+     (print-deps pom (:dependencies pom)
+                 [(artifact-version-key dep)]
+                 (get-in pom [:dependencies :exclusions]))))
+  ([pom dependencies path exclusions]
+   ; (println pom)
+   ; (println "DM: " (managed-dependencies pom))
+   (let [dm (managed-versions pom)]
+     ; (println dm)
+     (loop [deps dependencies p path e exclusions]
+       (if (seq deps)
+         (let [dep (versioned-dependency dm (first deps))
+               pom (pom-for-artifact dep)]
+           (if (contains? path (artifact-version-key dep))
+             (println "cycle" path dep)
+             (when-not (excluded? e dep)
+               (print-deps dep (:dependencies dep)
+                           (conj path (artifact-version-key dep))
+                           (concat e (:exclusions dep)))))
+           (recur (rest deps) p e))
+         (println (artifact-version-key pom)))))))
 
 (comment
   (str "a-" nil "-b")
@@ -484,13 +548,19 @@
               (artifact-relative-path {:group-id "org.soulspace.clj"
                                        :artifact-id "clj.base"
                                        :version "0.8.3"})))
-  (slurp "http://repo.clojars.org/org/soulspace/clj/clj.base/")
   @(http/head "http://repo.clojars.org/org/soulspace/clj/clj.base/")
   @(http/request {:url "http://repo.clojars.org/org/soulspace/clj/clj.base/"
                   :method :head
                   :timeout 500})
   (resolve-dependencies {:group-id "org.soulspace.clj" :artifact-id "clj.base"
                          :version "0.8.3"})
-  (slurp "/home/soulman/.m2/repository/org/codehaus/jsr166-mirror/jsr166y/1.7.0/jsr166y-1.7.0.pom")
+  (resolve-dependencies {:group-id "org.soulspace.clj" :artifact-id "clj.base"
+                         :version "0.8.3"})
+  (print-deps {:group-id "org.soulspace.clj" :artifact-id "clj.base"
+               :version "0.8.3"})
+  (print-deps {:group-id "org.apache.spark" :artifact-id "spark-core_2.12"
+               :version "3.2.1"})
+  (merge-poms {:dependency-management {:dependencies [{:group-id "a" :artifact-id "b" :version "1"}]}}
+              {:dependency-management {:dependencies [{:group-id "c" :artifact-id "d" :version "2"}]}})
   )
 

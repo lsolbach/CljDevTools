@@ -41,4 +41,5 @@ Change Log
 
 0.3.7
 -----
-* add (preliminary) handling of package urls
+* added handling of package urls (work in progress)
+* added handling of transitive dependencies (work in progress)
