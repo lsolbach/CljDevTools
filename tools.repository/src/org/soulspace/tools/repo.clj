@@ -1,9 +1,11 @@
 (ns org.soulspace.tools.repo
   (:require [clojure.string :as str]
+            [clojure.set :as set]
             [clojure.walk :as walk]
             [clojure.spec.alpha :as s]
             [clojure.java.io :as io]
             [org.httpkit.client :as http]
+            [org.soulspace.clj.string :as sstr]
             [org.soulspace.clj.namespace :as nsp]
             [org.soulspace.clj.file :as file]
             [org.soulspace.clj.property-replacement :as prop]
@@ -215,6 +217,12 @@
      (io/copy (io/input-stream url)
               (io/as-file (str local-path "/" (artifact-filename classifier extension a)))))))
 
+(defn artifact-versions
+  ""
+  [repo a]
+; TODO extract versions
+  )
+
 ;;
 ;; repositories
 ;;
@@ -420,22 +428,54 @@
                             :opt [::group-id ::version ::classifier ::type ::scope ::system-path ::optional ::exclusions]))
 
 ;;;
-;;; artifact dependency handling
+;;; dependency handling
 ;;;
 
+(defn matches-component?
+  "Returns true, if the dependency component string matches the component pattern."
+  [p s]
+  (if (and p s)
+    (if (str/ends-with? p "*") ; star pattern
+      (str/starts-with? s (sstr/substring 0 (- (count p) 1) p))
+      (= p s))
+    false))
+
+(defn matches-exclude?
+  "Returns true, if the dependency matches the exclude."
+  [exclude dependency]
+  (and (matches-component? (:group-id exclude) (:group-id dependency))
+       (matches-component? (:artifact-id exclude) (:artifact-id dependency))))
+
+(comment
+  (matches-component? "org.soulspace" "org.soulspace")
+  (matches-component? "org.soulspace" "org.dingdong")
+  (matches-component? "org.soul*" "org.soulspace")
+  (matches-component? "org.soul*" "org.dingdong")
+  )
+
 (defn resolved?
-  "Checks, if the artifact is already resolved."
-  [resolved a]
-  (contains? resolved (artifact-key a))) ; TODO artifack-version-key?
+  "Checks, if the artifact is already part of the resolved set."
+  [resolved dep]
+  (contains? resolved (artifact-key dep))) ; TODO artifack-version-key?
 
 (defn cycle?
   "Checks, if the artifact produces a cycle."
-  [a])
+  [path dep]
+  ; path is a vector so use some instead of contains?
+  (some #(= (artifact-version-key dep) %) path))
 
 (defn excluded?
-  "Checks, if the artifact is in the set of exclusions."
-  [exclusions a]
-  (contains? exclusions (artifact-key a)))
+  "Checks if the dependency is part of the excluded set."
+  [exclusions dep]
+  (some #(matches-exclude? % dep) exclusions))
+
+(defn follow?
+  "Checks if the dependency should be followed."
+  ([dep]
+   (follow? #{"compile" "provided" "runtime" "system"} dep))
+  ([scopes-to-follow dep]
+   (and (not (get dep :optional false))
+       (contains? scopes-to-follow (get dep :scope "compile")))))
 
 (defn exclude-artifact
   "Returns the exclusions collection with the artifact key added."
@@ -446,17 +486,49 @@
       (conj exclusions k) ; not contained, add artifact key 
       )))
 
+(defn versioned-dependency
+  "Returns the dependency with version filled in from "
+  [dm dependency]
+  (if (nil? (:version dependency))
+    (assoc dependency :version (dm (artifact-key dependency)))
+    dependency))
+
+(defn exclusion-set
+  "Returns a set of exclusions from the exclusion lists of POM dependencies"
+  [e]
+  ;(println "Exclusion list: " e)
+  (if (seq e)
+    (into #{} (map artifact-key) e)
+    #{}))
+
+(defn dependency-key
+  "Returns a key for the dependency."
+  [dep]
+  (str (:group-id dep)
+       "/" (:artifact-id dep)
+       "-" (:version dep)
+       (when (:classifier dep) (str "-" (:scope dep)))
+       (when (:optional dep) (str " {optional: " (:optional dep) "}"))
+       (when (:scope dep) (str " {scope: " (:scope dep) "}"))
+       (when (:type dep) (str " {type: " (:type dep) "}"))))
+
 (defn build-dependency-node
   "Creates a node for the dependency tree."
   ([a]
+   (build-dependency-node a [] #{}))
+  ([a dependencies]
+   (build-dependency-node a dependencies #{}))
+  ([a dependencies exclusions]
    {:group-id (:group-id a)
     :artifact-id (:artifact-id a)
     :version (:version a)
-    :exclusions #{}
-    :dependencies []
-    :scope ""})
-  ([a dependencies]
-   ))
+    :optional (:optional a)
+    :dependencies dependencies
+    :exclusions exclusions
+    :scope (:scope a)
+    :type (:type a)
+    :system-path (:system-path a)}))
+
 
 ; transitive dependency resolution with depth first search
 ; build up exclusions on the way down and inclusions on the way up
@@ -478,18 +550,7 @@
          (recur (rest deps) path))) ; FIXME build dep node and include
      )))
 
-(defn excludes?
-  ""
-  [e dep]
-  (contains? (into {} (map artifact-key e)) (artifact-key dep)))
-
-
-(defn versioned-dependency
-  ""
-  [dm dependency]
-  (if (nil? (:version dependency))
-    (assoc dependency :version (dm (artifact-key dependency)))
-    dependency))
+; TODO handle exclusions (WIP) to break cycles
 
 (defn print-deps
   "Print dependencies."
@@ -497,24 +558,34 @@
    (let [pom (pom-for-artifact dep)]
      (print-deps pom (:dependencies pom)
                  [(artifact-version-key dep)]
-                 (get-in pom [:dependencies :exclusions]))))
-  ([pom dependencies path exclusions]
-   ; (println pom)
+                 (exclusion-set (get-in pom [:dependencies :exclusions])) 
+                 0)))
+  ([pom dependencies path exclusions indent]
+    (println "Called for" (artifact-version-key pom))
+   ; (println "Path" (str/join "->" path))
    ; (println "DM: " (managed-dependencies pom))
-   (let [dm (managed-versions pom)]
+   (let [dm (managed-versions pom)] ; normalize versions
      ; (println dm)
-     (loop [deps dependencies p path e exclusions]
-       (if (seq deps)
-         (let [dep (versioned-dependency dm (first deps))
-               pom (pom-for-artifact dep)]
-           (if (contains? path (artifact-version-key dep))
-             (println "cycle" path dep)
-             (when-not (excluded? e dep)
-               (print-deps dep (:dependencies dep)
-                           (conj path (artifact-version-key dep))
-                           (concat e (:exclusions dep)))))
-           (recur (rest deps) p e))
-         (println (artifact-version-key pom)))))))
+     (if (seq dependencies)
+       (loop [deps dependencies p path e exclusions]
+         (if (seq deps)
+           (let [dep (versioned-dependency dm (first deps))
+                 dpom (pom-for-artifact dep)]
+             (if (cycle? path dep)
+               (println "Cycle:"
+                        (str/join " -> " path)
+                        "->" (artifact-version-key dep))
+               (if (excluded? e dep)
+                 (println "Excluded:" dep)
+                 (if-not (follow? dep)
+                   (println "Not followed:" dep)
+                   (print-deps dep (:dependencies dpom)
+                               (conj path (artifact-version-key dep))
+                               (set/union e (exclusion-set (:exclusions dep)))
+                               (inc indent)))))
+             (recur (rest deps) p e))
+           (println "end of list")))
+       (println (str/join (repeat indent "-")) (dependency-key pom))))))
 
 (comment
   (str "a-" nil "-b")
@@ -556,6 +627,10 @@
                          :version "0.8.3"})
   (resolve-dependencies {:group-id "org.soulspace.clj" :artifact-id "clj.base"
                          :version "0.8.3"})
+  (cycle? ["org.scalatest/scalatest_2.12[3.2.9]" "org.scala-lang/scala-compiler[2.12.13]"
+           "org.scala-lang.modules/scala-xml_2.12[1.0.6]" "org.scala-lang/scala-compiler[2.12.0]"
+           "org.scala-lang.modules/scala-xml_2.12[1.0.5]"]
+          {:group-id "org.scala-lang", :artifact-id "scala-compiler", :version "2.12.0"})
   (print-deps {:group-id "org.soulspace.clj" :artifact-id "clj.base"
                :version "0.8.3"})
   (print-deps {:group-id "org.apache.spark" :artifact-id "spark-core_2.12"
