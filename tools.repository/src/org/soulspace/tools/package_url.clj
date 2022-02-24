@@ -17,7 +17,7 @@
                   (/[a-z]+[a-z0-9._-]*){0,1}
                   /([a-z]+[a-z0-9._-]*){1,1}
                   (@([a-z]+[a-z0-9._-]*){1,1}){0,1}
-                  (?(([a-z]+[a-z0-9._-]*){1,1}=([a-z]+[a-z0-9._-]*){1,1})){0,1}
+                  (\?(([a-z]+[a-z0-9._-]*){1,1}=([a-z]+[a-z0-9._-]*){1,1})){0,1}
                   (#){0,1}")
 ;(def type-regex #"")
 
@@ -46,7 +46,7 @@
 (defn parse
   "Parses the string into package url."
   [s]
-
+  ; TODO use regex or grammar
   )
 
 (defn generate
@@ -66,4 +66,5 @@
 
 (comment
   (generate {:type "maven" :name "clj.base" :version "0.8.3"})
+  (generate {:type "maven" :namespace "org.soulspace.clj" :name "clj.base" :version "0.8.3"})
   )
